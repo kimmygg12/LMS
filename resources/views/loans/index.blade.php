@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="container">
-        <a href="{{ route('loans.history') }}" class="btn btn-secondary">View Loan History</a>
             <a href="{{ route('loans.create') }}" class="btn btn-primary">Add Book</a>
             @if ($message = Session::get('success'))
                 <div class="alert alert-success mt-2">
