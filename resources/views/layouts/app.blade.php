@@ -204,7 +204,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('loans.history') }}" class="nav-link">
+                            {{-- <a href="{{ route('loans.history') }}" class="nav-link"> --}}
                                 <i class="fa-solid fa-book"></i>
                                 <p>report</p>
                             </a>
