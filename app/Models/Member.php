@@ -22,5 +22,9 @@ class Member extends Model
     {
         return $this->hasMany(LoanBook::class);
     }
+    public function history()
+    {
+        return $this->hasMany(LoanBookHistory::class);
+    }
 
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookCopyController;
 use App\Http\Controllers\LoanBookController;
+use App\Http\Controllers\LoanBookHistoryController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\StudyController;
 use App\Http\Controllers\SubjectController;
@@ -59,6 +60,17 @@ Route::get('/loans/create', [LoanBookController::class, 'create'])->name('loans.
 Route::post('/loans', [LoanBookController::class, 'store'])->name('loans.store');
 Route::post('/loans/renew/{id}', [LoanBookController::class, 'renew'])->name('loans.renew');
 Route::post('/loans/return', [LoanBookController::class, 'return'])->name('loans.return');
+Route::get('/loans-history', [LoanBookController::class, 'history'])->name('loans.history');
+Route::get('loan-book-history', [LoanBookController::class, 'history'])->name('loanBookHistory.index');
+
+// Route::post('/loans/finebook{id}', [LoanBookController::class, 'finebook'])->name('loans.finebook');
+Route::put('/loans/{id}/finebook', [LoanBookController::class, 'finebook'])->name('loans.finebook');
+Route::get('/loans/{id}/finebook', [LoanBookController::class, 'showFinebookForm'])->name('loans.showFinebookForm');
+
+Route::get('/loanBookHistories', [LoanBookHistoryController::class, 'index'])->name('loanBookHistories.index');
+Route::get('/loanBookHistories/{id}', [LoanBookHistoryController::class, 'show'])->name('loanBookHistories.show');
+// Route::get('/loanBookHistories/{id}', [LoanBookHistoryController::class, 'show']);
+Route::get('/loanBookHistories/{id}/print', [LoanBookHistoryController::class, 'print'])->name('loanBookHistories.print');
 
 
 Route::get('students/search', [LoanBookController::class, 'searchStudent'])->name('students.search');

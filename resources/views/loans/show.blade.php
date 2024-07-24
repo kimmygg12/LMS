@@ -23,14 +23,6 @@
                 <label for="renew_date">Renew Date</label>
                 <input type="date" name="renew_date" id="renew_date" class="form-control" value="{{ old('renew_date', $loan->renew_date) }}" required>
             </div>
-            <div class="form-group">
-                <label for="fine">Fine</label>
-                <input type="number" step="0.01" name="fine" id="fine" class="form-control" value="{{ old('fine', $loan->fine) }}">
-            </div>
-            <div class="form-group">
-                <label for="reason">Reason for Fine</label>
-                <textarea name="reason" id="reason" class="form-control">{{ old('reason', $loan->fine_reason) }}</textarea>
-            </div>
             <button type="submit" class="btn btn-primary">Renew Loan</button>
         </form>
     @endif

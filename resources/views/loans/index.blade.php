@@ -2,6 +2,8 @@
 
 @section('content')
     <div class="container">
+        {{-- <a href="{{ route('loans.history') }}" class="btn btn-secondary">View Loan History</a> --}}
+        <a href="{{ route('loanBookHistories.index') }}" class="btn btn-secondary">View Loan History</a>
             <a href="{{ route('loans.create') }}" class="btn btn-primary">Add Book</a>
             @if ($message = Session::get('success'))
                 <div class="alert alert-success mt-2">
@@ -48,9 +50,10 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('loans.show', $loan->id) }}" class="btn btn-info">View</a>
+                            <a href="{{ route('loans.show', $loan->id) }}" class="btn btn-info btn-sm">renew</a>
+                            <a href="{{ route('loans.showFinebookForm', $loan->id) }}" class="btn btn-warning">Fine Book</a>
                             @if ($loan->status === 'borrowed')
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#returnBookModal"
+                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#returnBookModal"
                                     data-invoice="{{ $loan->invoice_number }}">
                                     Return Book
                                 </button>
