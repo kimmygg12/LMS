@@ -21,13 +21,19 @@ class StudyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'study' => 'required|integer|unique:studies',
+            'name' => 'required|string|max:255',
         ]);
 
-        Study::create($request->all());
+        Study::create([
+            'name' => $request->name,
+        ]);
 
-        return redirect()->route('studies.index')
-                         ->with('success', 'Study year created successfully.');
+        return redirect()->route('studies.index')->with('success', 'Study created successfully.');
+    }
+
+    public function show(Study $study)
+    {
+        return view('studies.show', compact('study'));
     }
 
     public function edit(Study $study)
@@ -38,19 +44,20 @@ class StudyController extends Controller
     public function update(Request $request, Study $study)
     {
         $request->validate([
-            'study' => 'required|integer|unique:studies,study,' . $study->id,
+            'name' => 'required|string|max:255',
         ]);
 
-        $study->update($request->all());
+        $study->update([
+            'name' => $request->name,
+        ]);
 
-        return redirect()->route('studies.index')
-                         ->with('success', 'Study year updated successfully.');
+        return redirect()->route('studies.index')->with('success', 'Study updated successfully.');
     }
 
     public function destroy(Study $study)
     {
         $study->delete();
-        return redirect()->route('studies.index')
-                         ->with('success', 'Study year deleted successfully.');
+
+        return redirect()->route('studies.index')->with('success', 'Study deleted successfully.');
     }
 }

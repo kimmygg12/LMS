@@ -7,11 +7,8 @@
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label for="study">Study Year</label>
-                <input type="number" name="study" id="study" class="form-control" value="{{ old('study', $study->study) }}" required>
-                @error('study')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" class="form-control" value="{{ $study->name }}" required>
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
         </form>

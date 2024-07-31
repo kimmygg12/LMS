@@ -1,34 +1,40 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Member;
+use App\Models\Study;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
     public function index(Request $request)
-    {
-        $search = $request->input('search');
-        $members = Member::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('memberId', 'like', "%{$search}%")
-                    ->orWhere('name_latin', 'like', "%{$search}%");
-            })
-            ->get();
-        return view('members.index', compact('members', 'search'));
+    {    
+        $query = Member::with(['study', 'category']);
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('memberId', 'like', "%{$search}%")
+                  ->orWhere('name_latin', 'like', "%{$search}%")
+                  ->orWhere('category_id', 'like', "%{$search}%");
+
+
+        }
+    
+        $members = $query->paginate(5);
+        return view('members.index', compact('members'))->with('i', (request()->input('page', 1) - 1) * 5);
     }
-    public function search(Request $request)
-    {
-        $term = $request->get('term');
-        $members = Member::where('name', 'LIKE', "%{$term}%")
-                         ->get(['id', 'name as value']);
-        return response()->json($members);
-    }
+    
+
     public function create()
     {
-        return view('members.create');
+        $studies = Study::all();
+        $categories = Category::all();
+        return view('members.create', compact('studies', 'categories'));
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -36,8 +42,8 @@ class MemberController extends Controller
             'name_latin' => 'nullable|string|max:255',
             'gender' => 'required|string|in:male,female',
             'phone' => 'nullable|string|max:15',
-            'address' => 'nullable|string|max:255',
-            'dob' => 'nullable|date',
+            'study_id' => 'required|exists:studies,id',
+            'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -46,8 +52,8 @@ class MemberController extends Controller
             'name_latin' => $request->name_latin,
             'gender' => $request->gender,
             'phone' => $request->phone,
-            'address' => $request->address,
-            'dob' => $request->dob,
+            'study_id' => $request->study_id,
+            'category_id' => $request->category_id,
             'memberId' => $this->generateMemberId(),
         ]);
         if ($request->hasFile('image')) {
@@ -58,17 +64,34 @@ class MemberController extends Controller
         }
         $member->save();
 
-        return redirect()->route('members.index')->with('success', 'Member created successfully.');
+        return redirect()->route('members.index');
+        // return redirect()->back()->with('success', 'Member created successfully.');
     }
+    // public function show($id)
+    // {
+    //     $member = Member::with(['study', 'category'])->findOrFail($id);
+    //     return view('members.show', compact('member'));
+    // }
     public function show($id)
-    {
-        $member = Member::findOrFail($id);
-        return view('members.show', compact('member'));
-    }
+{
+    $member = Member::findOrFail($id);
+    return response()->json([
+        'memberId' => $member->memberId,
+        'name' => $member->name,
+        'name_latin' => $member->name_latin,
+        'gender' => $member->gender,
+        'phone' => $member->phone,
+        'study_name' => $member->study->name,
+        'category_name' => $member->category->name,
+        'image' => $member->image ? asset($member->image) : null,
+    ]);
+}
     public function edit($id)
     {
         $member = Member::findOrFail($id);
-        return view('members.edit', compact('member'));
+        $studies = Study::all();
+        $categories = Category::all();
+        return view('members.edit', compact('member', 'studies', 'categories'));
     }
 
     public function update(Request $request, $id)
@@ -78,17 +101,18 @@ class MemberController extends Controller
             'name_latin' => 'nullable|string|max:255',
             'gender' => 'required|string|in:male,female',
             'phone' => 'nullable|string|max:15',
-            'address' => 'nullable|string|max:255',
-            'dob' => 'nullable|date',
+            'study_id' => 'required|exists:studies,id',
+            'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
         $member = Member::findOrFail($id);
         $member->name = $request->name;
         $member->name_latin = $request->name_latin;
         $member->gender = $request->gender;
         $member->phone = $request->phone;
-        $member->address = $request->address;
-        $member->dob = $request->dob;
+        $member->study_id = $request->study_id;
+        $member->category_id = $request->category_id;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -99,8 +123,9 @@ class MemberController extends Controller
 
         $member->save();
 
-        return redirect()->route('members.index')->with('success', 'Member updated successfully.');
+        return redirect()->route('members.index');
     }
+
     public function destroy($id)
     {
         $member = Member::findOrFail($id);
@@ -109,14 +134,14 @@ class MemberController extends Controller
         }
         $member->delete();
 
-        return redirect()->route('members.index')->with('success', 'Member deleted successfully.');
+        // return redirect()->route('members.index');
+        return redirect()->back();
+
     }
+
     private function generateMemberId()
     {
-
         $randomNumber = rand(10000, 99999);
-
-
         return 'NMU-' . $randomNumber;
     }
 }

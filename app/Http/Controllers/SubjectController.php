@@ -22,7 +22,6 @@ class SubjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
         ]);
 
         Subject::create($request->all());
@@ -40,7 +39,6 @@ class SubjectController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
         ]);
 
         $subject = Subject::findOrFail($id);

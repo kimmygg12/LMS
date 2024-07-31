@@ -8,16 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'name',
-        'name_latin',
-        'gender',
-        'phone',
-        'address',
-        'dob',
-        'image',
-        'memberId'
-    ];
+    protected $fillable = ['name', 'name_latin', 'gender', 'phone', 'image', 'study_id', 'category_id', 'memberId'];
     public function loans()
     {
         return $this->hasMany(LoanBook::class);
@@ -25,6 +16,15 @@ class Member extends Model
     public function history()
     {
         return $this->hasMany(LoanBookHistory::class);
+    }
+    public function study()
+    {
+        return $this->belongsTo(Study::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
 }

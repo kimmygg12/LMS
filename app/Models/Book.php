@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'author_id', 'isbn', 'publication_date', 'description','status'];
+    protected $fillable = ['title', 'author_id', 'isbn', 'publication_date', 'cover_image', 'description','status'];
 
 
-
+    protected $dates = ['deleted_at'];
     public function author()
     {
         return $this->belongsTo(Author::class);
@@ -20,10 +20,6 @@ class Book extends Model
     public function otherAuthors()
     {
         return $this->belongsToMany(Author::class, 'other_authors');
-    }
-    public function copies()
-    {
-        return $this->hasMany(BookCopy::class);
     }
     public function book()
     {

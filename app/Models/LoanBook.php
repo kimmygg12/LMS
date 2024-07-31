@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class LoanBook extends Model
 {
@@ -18,17 +19,19 @@ class LoanBook extends Model
         'invoice_number',
         'status',
         'renew_date',
+        'pay_date',
         'fine',
         'fine_reason',
     ];
-
+    protected $casts = [
+        'loan_date' => 'datetime',
+        'due_date' => 'datetime',
+        'renew_date' => 'datetime',
+        'pay_date' => 'datetime',
+    ];
     public function book()
     {
         return $this->belongsTo(Book::class);
-    }
-    public function bookCopy()
-    {
-        return $this->belongsTo(BookCopy::class);
     }
     public function member()
     {
@@ -38,4 +41,20 @@ class LoanBook extends Model
     {
         return $this->hasMany(LoanBookHistory::class);
     }
+    // public function isDueTomorrow()
+    // {
+    //     $tomorrow = now()->addDay()->startOfDay();
+    //     return $this->due_date->is($tomorrow);
+    // }
+
+    // public function isRenewTomorrow()
+    // {
+    //     $tomorrow = now()->addDay()->startOfDay();
+    //     return $this->renew_date && $this->renew_date->is($tomorrow);
+    // }
+    // public function isOverdue()
+    // {
+    //     return $this->due_date->isPast();
+    // }
+
 }

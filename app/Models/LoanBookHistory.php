@@ -13,10 +13,13 @@ class LoanBookHistory extends Model
         'member_id',
         'price',
         'loan_date',
+        'due_date',
+        'pay_date',
         'invoice_number',
         'renew_date',
         'fine',
-        'fine_reason'
+        'fine_reason',
+        'status'
     ];
     public function loans()
     {

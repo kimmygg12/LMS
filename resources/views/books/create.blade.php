@@ -2,76 +2,115 @@
 
 @section('content')
     <div class="container">
-        <h1>Create Book</h1>
-        <form action="{{ route('books.store') }}" method="POST">
-            @csrf
-            <div class="form-group">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
+        <div class="card">
+            <div class="card-header">
+                <h1>
+                    បន្ថែមសៀវភៅថ្មី</h1>
             </div>
-            <div class="form-group">
-                <label for="author_id" class="form-label">Author</label>
-                <div class="input-group">
-                    <select class="form-control" id="author_id" name="author_id" required>
-                        <option value="">Select an author</option>
-                        @foreach ($authors as $author)
-                            <option value="{{ $author->id }}">{{ $author->name }}</option>
-                        @endforeach
-                    </select>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" id="btn-search-authors"
-                            data-bs-toggle="modal" data-bs-target="#addAuthorModal">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+            <div class="card-body">
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
                     </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="isbn" class="form-label">ISBN</label>
-                <input type="text" class="form-control" id="isbn" name="isbn" value="{{ old('isbn') }}" >
-            </div>
-            <div class="form-group">
-                <label for="publication_date">ឆ្នាំបោះពុម្ព:</label>
-                <input type="date" name="publication_date" class="form-control" id="publication_date"
-                    value="{{ old('publication_date') }}"required>
-            </div>
-            {{-- <div class="form-group">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description">{{ old('description') }}</textarea>
-            </div>  --}}
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+                @endif
 
-    <div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addAuthorModalLabel">Add New Author</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addAuthorForm">
-                        <div class="mb-3">
-                            <label for="authorName" class="form-label">Author Name</label>
-                            <input type="text" class="form-control" id="authorName" name="name" required>
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="title">ចំណងជើង</label>
+                                <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save</button>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="author_id" class="form-label">អ្នកនិពន្ធ</label>
+                                <div class="input-group">
+                                    <select class="form-control" id="author_id" name="author_id" required>
+                                        <option value="">ជ្រើសរើសអ្នកនិពន្ធ</option>
+                                        @foreach ($authors as $author)
+                                            <option value="{{ $author->id }}">{{ $author->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" id="btn-search-authors" data-bs-toggle="modal" data-bs-target="#addAuthorModal">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="isbn">លេខកូដ</label>
+                                <input type="text" name="isbn" id="isbn" class="form-control" value="{{ old('isbn') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="publication_date">បោះពុម្ពផ្សាយ</label>
+                                <input type="date" name="publication_date" id="publication_date" class="form-control" value="{{ old('publication_date') }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="description">ព័ត៌មានបន្ថែប</label>
+                        <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="cover_image">រូបភាពក្រប</label>
+                        <input type="file" name="cover_image" id="cover_image" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-success">រក្សាទុក</button>
+                </form>
             </div>
         </div>
+
+        <!-- Modal for Adding Authors -->
+        <div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addAuthorModalLabel">បន្ថែមអ្នកនិពន្ធថ្មី។</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addAuthorForm">
+                            <div class="mb-3">
+                                <label for="authorName" class="form-label">ឈ្មោះអ្នកនិពន្ធ</label>
+                                <input type="text" class="form-control" id="authorName" name="name" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">រក្សាទុក</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
     </div>
+
     <script>
         $(document).ready(function() {
             $('#author_id').select2({
                 theme: 'bootstrap-5'
             });
         });
-    </script>
-    <script>
+
         document.getElementById('addAuthorForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('authorName').value;

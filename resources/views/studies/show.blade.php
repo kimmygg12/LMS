@@ -1,16 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Show School Year</h1>
-
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Study:</strong>
-                {{ $study->study }}
+    <div class="container">
+        <h1>Study Details</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ $study->name }}</h5>
+                <a href="{{ route('studies.index') }}" class="btn btn-secondary mt-3">Back to List</a>
             </div>
         </div>
     </div>
-</div>
 @endsection
