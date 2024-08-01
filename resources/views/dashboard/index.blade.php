@@ -58,7 +58,7 @@
         </div>
 
         <div class="card-body">
-            <table id="datatablesSimple">
+            <table id="datatablesSimpleA">
                 <thead>
                     <tr>
                         <th>វិក្កយបត្រ</th>
@@ -69,6 +69,7 @@
                         <th>បន្តខ្ចី</th>
                         <th>តម្លៃ</th>
                         <th>ស្ថានភាទ</th>
+                        <th>ប៊ូតុង</th>
                     </tr>
                 <tbody>
                     @foreach ($loans as $loan)
@@ -113,7 +114,11 @@
                                         <span class="badge badge-secondary">Reserved</span>
                                     @endif
                                 </td>
-                                </td>
+                                <td>
+                                        <a href="{{ route('loans.finebook', $loan->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-money-bill"></i>
+                                        </a>
+                                    </td>
                             </tr>
                         @endif
                     @endforeach

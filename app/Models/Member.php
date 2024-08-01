@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
+    protected $table = 'members'; 
     protected $fillable = ['name', 'name_latin', 'gender', 'phone', 'image', 'study_id', 'category_id', 'memberId'];
     public function loans()
     {

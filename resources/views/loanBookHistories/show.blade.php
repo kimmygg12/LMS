@@ -34,9 +34,16 @@
 
         <div class="modal-body">
             <div class="row">
-                <!-- Cover Image -->
+
                 <div class="col-md-4 mb-3">
-                    @if ($loanHistory->book->cover_image)
+                    {{-- @if ($loanHistory->book->cover_image)
+                        <img src="{{ asset($loanHistory->book->cover_image) }}" alt="Cover Image" class="img-fluid rounded-start"
+                            style="width: 120px;">
+                    @else
+                        <img src="{{ asset('images/default-cover.jpg') }}" class="img-fluid rounded-start"
+                            alt="Default Cover">
+                    @endif --}}
+                    @if ($loanHistory->book && $loanHistory->book->cover_image)
                         <img src="{{ asset($loanHistory->book->cover_image) }}" alt="Cover Image" class="img-fluid rounded-start"
                             style="width: 120px;">
                     @else
@@ -46,7 +53,8 @@
                 </div>
                 <!-- loanHistory and Member Details -->
                 <div class="col-md-4 mb-3">
-                    <p><strong>Name:</strong> {{ $loanHistory->member->name }} <strong>|</strong> {{ $loanHistory->member->memberId }}</p>
+                    <p><strong>Name:</strong> {{ $loanHistory->member->name }} <strong>|</strong>
+                        {{ $loanHistory->member->memberId }}</p>
                     <p><strong>Gender:</strong> {{ $loanHistory->member->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}</p>
                     <p><strong>Phone:</strong> {{ $loanHistory->member->phone }}</p>
                     <p><strong>Study:</strong> {{ $loanHistory->member->study->name }}</p>
@@ -84,15 +92,21 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $loanHistory->book->isbn }}</td>
+                            {{-- <td>{{ $loanHistory->book->isbn }}</td>
                             <td>{{ $loanHistory->book->title }}</td>
                             <td>{{ $loanHistory->book->author->name }}</td>
+                            <td>{{ $loanHistory->price ?? 'N/A' }} ៛</td> --}}
+                            <td>{{ $loanHistory->book ? $loanHistory->book->isbn : 'N/A' }}</td>
+                            <td>{{ $loanHistory->book ? $loanHistory->book->title : 'N/A' }}</td>
+                            <td>{{ $loanHistory->book && $loanHistory->book->author->name ? $loanHistory->book->author->name : 'N/A' }}
+                            </td>
                             <td>{{ $loanHistory->price ?? 'N/A' }} ៛</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <p><strong>Fine:</strong> {{ $loanHistory->fine ?? 'N/A' }} <strong>Fine Reason:</strong> {{ $loanHistory->fine_reason ?? 'N/A' }}</p>
+            <p><strong>Fine:</strong> {{ $loanHistory->fine ?? 'N/A' }} <strong>Fine Reason:</strong>
+                {{ $loanHistory->fine_reason ?? 'N/A' }}</p>
         </div>
 
         <div class="modal-footer">
@@ -102,28 +116,29 @@
     </div>
 
     @push('scripts')
-    <script>
-        function printLoanDetails() {
-            // Create a new window or tab
-            var printWindow = window.open('', '', 'height=600,width=800');
-            
-            // Write the content of the page to the new window
-            printWindow.document.write('<html><head><title>Print Loan Details</title>');
-            printWindow.document.write('<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">'); // Include your CSS
-            printWindow.document.write('</head><body >');
-            printWindow.document.write(document.querySelector('.container').innerHTML);
-            printWindow.document.write('</body></html>');
-            
-            // Close the document to finish writing
-            printWindow.document.close();
-            
-            // Wait for the content to load
-            printWindow.onload = function() {
-                printWindow.focus(); // Focus on the new window
-                printWindow.print(); // Trigger the print dialog
-                printWindow.close(); // Close the window after printing
-            };
-        }
-    </script>
+        <script>
+            function printLoanDetails() {
+                // Create a new window or tab
+                var printWindow = window.open('', '', 'height=600,width=800');
+
+                // Write the content of the page to the new window
+                printWindow.document.write('<html><head><title>Print Loan Details</title>');
+                printWindow.document.write(
+                '<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">'); // Include your CSS
+                printWindow.document.write('</head><body >');
+                printWindow.document.write(document.querySelector('.container').innerHTML);
+                printWindow.document.write('</body></html>');
+
+                // Close the document to finish writing
+                printWindow.document.close();
+
+                // Wait for the content to load
+                printWindow.onload = function() {
+                    printWindow.focus(); // Focus on the new window
+                    printWindow.print(); // Trigger the print dialog
+                    printWindow.close(); // Close the window after printing
+                };
+            }
+        </script>
     @endpush
 @endsection

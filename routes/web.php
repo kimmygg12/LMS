@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
@@ -8,34 +9,43 @@ use App\Http\Controllers\LoanBookController;
 use App\Http\Controllers\LoanBookHistoryController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudyController;
 use App\Http\Controllers\SubjectController;
 use App\Models\Author;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('authors', AuthorController::class);
+
+Auth::routes();
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 Route::resource('books', BookController::class);
 Route::post('authors', function (Request $request) {
     $author = Author::create($request->all());
     return response()->json($author);
 })->name('authors.store');
 
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('profile', [ProfileController::class, 'update'])->name('profile.update');
+});
 Route::get('/loans/reportLoan', [LoanBookController::class, 'reportLoan'])->name('loans.reportLoan');
 Route::get('/overdue-books-report', [LoanBookController::class, 'overdueBooksReport'])->name('loans.overdueBooksReport');
 
@@ -66,11 +76,16 @@ Route::resource('loans', LoanBookController::class);
 
 
 Route::resource('loans', LoanBookController::class);
+Route::resource('members', MemberController::class);
 
 
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+
+
+Route::get('loans/reports/tab', [LoanBookController::class, 'indexReport'])->name('loans.reports');
+Route::get('loans/report/total', [LoanBookController::class, 'reportTotalLoan'])->name('loans.report.total');
 
 
 Route::get('/loans', [LoanBookController::class, 'index'])->name('loans.index');
@@ -82,7 +97,7 @@ Route::get('loan-book-history', [LoanBookController::class, 'history'])->name('l
 
 Route::get('loans/{id}/renew', [LoanBookController::class, 'showRenewForm'])->name('loans.renew.form');
 Route::put('loans/{id}/renew', [LoanBookController::class, 'renew'])->name('loans.renew');
-
+Route::resource('students', StudentController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('loans', LoanBookController::class);
 
@@ -94,7 +109,7 @@ Route::get('/loanBookHistories/{id}', [LoanBookHistoryController::class, 'show']
 // Route::get('/loanBookHistories/{id}', [LoanBookHistoryController::class, 'show']);
 Route::get('/loanBookHistories/{id}/print', [LoanBookHistoryController::class, 'print'])->name('loanBookHistories.print');
 
-
+Route::get('/members/{id}', [MemberController::class, 'show'])->name('members.show');
 Route::get('/members', [MemberController::class, 'index'])->name('members.index');
 Route::get('/members/create', [MemberController::class, 'create'])->name('members.create');
 Route::post('/members', [MemberController::class, 'store'])->name('members.store');
@@ -103,15 +118,5 @@ Route::put('/members/{member}', [MemberController::class, 'update'])->name('memb
 Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
 Route::get('members/invoice/{invoice}', [MemberController::class, 'searchInvoice'])->name('members.searchInvoice');
 Route::get('/members/search', [MemberController::class, 'search'])->name('members.search');
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
-
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

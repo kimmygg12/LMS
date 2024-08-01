@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\LoanBook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
@@ -140,7 +141,8 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
-        // Delete cover image
+
+    
         if ($book->cover_image) {
             Storage::disk('public')->delete($book->cover_image);
         }

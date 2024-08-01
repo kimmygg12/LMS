@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class LoanBookHistory extends Model
 {
@@ -25,6 +26,14 @@ class LoanBookHistory extends Model
     {
         return $this->belongsTo(LoanBook::class);
     }
+    public function handle()
+{
+    DB::table('loan_book_histories')
+        ->whereNotIn('book_id', function($query) {
+            $query->select('id')->from('books');
+        })
+        ->delete();
+}
 
     public function book()
     {

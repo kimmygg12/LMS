@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+
     <h1>Edit Loan</h1>
     <form action="{{ route('loans.update', $loan->id) }}" method="POST">
         @csrf
@@ -41,5 +41,5 @@
         
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
-</div>
+
 @endsection
