@@ -22,6 +22,11 @@ class LoanBookHistory extends Model
         'fine_reason',
         'status'
     ];
+    protected $casts = [
+        'loan_date' => 'datetime',
+        'pay_date' => 'datetime',
+    ];
+    protected $dates = ['loan_date', 'due_date', 'renew_date', 'pay_date'];
     public function loans()
     {
         return $this->belongsTo(LoanBook::class);
@@ -43,5 +48,9 @@ class LoanBookHistory extends Model
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
     }
 }

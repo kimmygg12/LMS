@@ -16,10 +16,10 @@ class Book extends Model
         static::deleting(function ($book) {
             // Assuming you want to log history of all books that were deleted
             // and that you have access to the relevant member and loan data
-            
+
             // You may need to adjust this part to fit your actual logic
             $loans = LoanBook::where('book_id', $book->id)->get(); // Adjust based on your actual LoanBook model
-            
+
             foreach ($loans as $loan) {
                 \App\Models\LoanBookHistory::create([
                     'book_id' => $book->id,
@@ -37,7 +37,7 @@ class Book extends Model
             }
         });
     }
-    protected $fillable = ['title', 'author_id', 'isbn', 'publication_date', 'cover_image', 'description','status'];
+    protected $fillable = ['title', 'author_id', 'isbn', 'publication_date', 'quantity', 'cover_image', 'description', 'status', 'returned_at'];
 
 
     protected $dates = ['deleted_at'];
@@ -54,13 +54,26 @@ class Book extends Model
     {
         return $this->hasMany(LoanBookHistory::class);
     }
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
     public function handle()
+    {
+        DB::table('loan_book_histories')
+            ->whereNotIn('book_id', function ($query) {
+                $query->select('id')->from('books');
+            })
+            ->delete();
+    }
+    public function loanBooks()
+    {
+        return $this->hasMany(LoanBook::class);
+    }
+
+public function loanBookHistories()
 {
-    DB::table('loan_book_histories')
-        ->whereNotIn('book_id', function($query) {
-            $query->select('id')->from('books');
-        })
-        ->delete();
+    return $this->hasMany(LoanBookHistory::class);
 }
- 
+
 }

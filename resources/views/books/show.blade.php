@@ -30,9 +30,11 @@
                             <p class="card-text"><strong>អ្នកនិពន្ធ:</strong> {{ $book->author->name }}</p>
                             <p class="card-text"><strong>លេខកូដ:</strong> {{ $book->isbn }}</p>
                             <p class="card-text"><strong>បោះពុម្ពផ្សាយ:</strong> {{ $book->publication_date }}</p>
+                            <p class="card-text"><strong>ចំនួន:</strong> {{ $book->quantity }}</p>
+                            <p class="card-text"><strong>ប្រភេទ:</strong> {{ $book->subject->name }}</p>
                             <p class="card-text"><strong>ស្ថានភាព:</strong>
                                 @if ($book->status === 'available')
-                                    <span class="badge bg-success">Available</span>
+                                    <span class="badge bg-success">ទំនេ</span>
                                 @elseif ($book->status === 'borrowed')
                                     <span class="badge bg-warning text-dark">មិនទំនេ</span>
                                 @elseif ($book->status === 'reserved')

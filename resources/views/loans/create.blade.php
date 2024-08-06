@@ -3,7 +3,7 @@
 @section('content')
 <div class="card mt-3">
     <div class="card-header">
-        <h1>Create New Loan</h1>
+        <h1>ខ្ចីសៀវភៅ</h1>
     </div>
     <div class="card-body">
         @if (session('error'))
@@ -14,13 +14,12 @@
         <form action="{{ route('loans.store') }}" method="POST">
             @csrf
             <div class="row">
-                <!-- Book ISBN Dropdown -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="isbn" class="form-label">Book ISBN</label>
+                    <label for="isbn" class="form-label">កូដ</label>
                     <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-book-bookmark"></i></span>
+                        <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;"><i class="fa-duotone fa-solid fa-code"></i></span>
                         <select id="isbn" name="isbn" class="form-control" required>
-                            <option value="">Select a book by ISBN</option>
+                            <option value="">ជ្រើសរើសលេខសៀវភៅ</option>
                             @foreach ($books as $book)
                                 <option value="{{ $book->isbn }}" 
                                     data-id="{{ $book->id }}"
@@ -35,7 +34,7 @@
 
                 <!-- Book Title -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="title">Title</label>
+                    <label for="title">ចំណងជើង</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
                     <input type="text" id="title" name="title" class="form-control" value="{{ old('title') }}" readonly>
@@ -44,11 +43,11 @@
 
                 <!-- Member Dropdown -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="member_id" class="form-label">Member</label>
+                    <label for="member_id" class="form-label">សិស្ស</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                         <select id="member_id" name="member_id" class="form-control" required>
-                            <option value="">Select a member</option>
+                            <option value="">ID សិស្ស</option>
                             @foreach ($members as $member)
                                 <option value="{{ $member->id }}"
                                     {{ old('member_id') == $member->id ? 'selected' : '' }}>
@@ -61,16 +60,18 @@
 
                 <!-- Price Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="price">Price</label>
+                    <label for="price">ប្រាក់កក់</label>
                     <div class="input-group">
-                        <span class="input-group-text" style="width: 40px"><i class="fa-solid fa-dollar-sign"></i></span>
+                        <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;">
+                            <i class="fa-sharp fa-solid fa-dollar-sign"></i>
+                        </span>
                         <input type="number" id="price" name="price" class="form-control" value="{{ old('price') }}">
                     </div>
                 </div>
 
                 <!-- Loan Date Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="loan_date">Loan Date</label>
+                    <label for="loan_date">ខ្ចីនៅថ្ងៃ</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" id="loan_date" name="loan_date" class="form-control" value="{{ old('loan_date') }}" required>
@@ -79,7 +80,7 @@
 
                 <!-- Due Date Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="due_date">Due Date</label>
+                    <label for="due_date">ថ្ងៃកំណត់</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" id="due_date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>

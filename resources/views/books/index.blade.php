@@ -38,19 +38,21 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>ក្រប</th>
-                            <th>ចំណងជើង</th>
-                            <th>អ្នកនិពន្ធ</th>
-                            <th>លេខកូដ</th>
-                            <th>បោះពុម្ពផ្សាយ</th>
-                            <th>ស្ថានភាព</th>
-                            <th>ប៊ូតុង</th>
+                            <th class="text-center">ក្រប</th>
+                            <th class="text-center">ចំណងជើង</th>
+                            <th class="text-center">អ្នកនិពន្ធ</th>
+                            <th class="text-center">លេខកូដ</th>
+                            <th class="text-center">ប្រភេទ</th>
+                            <th class="text-center">បោះពុម្ពផ្សាយ</th>
+                            <th class="text-center">ចំនួន</th>
+                            <th class="text-center">ស្ថានភាព</th>
+                            <th class="text-center">ប៊ូតុង</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($books as $book)
                             <tr>
-                                <td class="tdsearch">
+                                <td class="text-center tdsearch">
                                     @if ($book->cover_image)
                                         <img src="{{ asset($book->cover_image) }}" alt="Cover Image"
                                             style="max-width: 50px;">
@@ -58,11 +60,13 @@
                                         <span>គ្មានរូបភាព</span>
                                     @endif
                                 </td>
-                                <td>{{ $book->title }}</td>
-                                <td>{{ $book->author->name }}</td>
-                                <td>{{ $book->isbn }}</td>
-                                <td>{{ $book->publication_date }}</td>
-                                <td>
+                                 <td class="text-center">{{ $book->title }}</td>
+                                 <td class="text-center">{{ $book->author->name }}</td>
+                                 <td class="text-center">{{ $book->isbn }}</td>
+                                 <td class="text-center">{{ $book->subject->name ?? 'No Subject' }}</td>
+                                 <td class="text-center">{{ $book->publication_date }}</td>
+                                 <td class="text-center">{{ $book->quantity }}</td>
+                                 <td class="text-center">
                                     @if ($book->status === 'available')
                                         <span class="badge bg-success">ទំនេរ</span>
                                     @elseif ($book->status === 'borrowed')
@@ -71,7 +75,7 @@
                                         <span class="badge bg-secondary">ខូចខាត</span>
                                     @endif
                                 </td>
-                                <td>
+                                 <td class="text-center">
                                     <a href="{{ route('books.show', $book->id) }}" class="btn btn-info btn-sm">
                                         <i class="fa-solid fa-circle-info"></i>
                                     </a>
@@ -92,7 +96,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">No books found.</td>
+                                <td colspan="8" class="text-center">No books found.</td>
                             </tr>
                         @endforelse
                     </tbody>

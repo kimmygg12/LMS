@@ -27,5 +27,5 @@ class Member extends Model
     {
         return $this->belongsTo(Category::class);
     }
-
+   
 }

@@ -2,43 +2,44 @@
 
 @section('content')
     <div class="mt-4">
-        <div class="card">
-            <div class="card-header">
-                <h1 class="card-title">Loan Records</h1>
+        <div class="card mt-3 mb-3">
+            <div class="card-header ">
+                <h2 class="card-title mt-3 mb-3">សៀវភៅដែលបានសង</h2>
             </div>
             <div class="card-body">
                 <table id="datatablesSimpleQ" class="display nowrap" style="width:100%">
                     <thead>
                         <tr>
-                            <th>លេខ​វិ​ក័​យ​ប័ត្រ</th>
-                            <th>Book ID</th>
-                            <th>Member ID</th>
-                            <th>Price</th>
-                            <th>Loan Date</th>
-                            <th>Due Date</th>
-                            <th>Renew Date</th>
-                            <th>Pay Date</th>
-                            <th>Fine</th>
-                            <th>Fine Reason</th>
-                            <th>Actions</th>
+                            <th class="text-center">លេខ​វិ​ក័​យ​ប័ត្រ</th>
+                            <th class="text-center">កូដ</th>
+                            <th class="text-center">ចំណងជើង</th>
+                            <th class="text-center">ឈ្មោះ</th>
+                            <th class="text-center">ប្រាក់កក់</th>
+                            <th class="text-center">ថ្ងៃខ្ចី</th>
+                            <th class="text-center">ថ្ងៃកំណត់</th>
+                            <th class="text-center">ខ្ចីបន្ត</th>
+                            <th class="text-center">ថ្ងៃសង</th>
+                            <th class="text-center">ផាកពិន័យ</th>
+                            <th class="text-center">មូលហេតុ</th>
+                            <th class="text-center">ប៊ូតុង</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($loanHistory as $history)
-                            <tr data-href="{{ route('loanBookHistories.show', $history->id) }}">
-                                <td>{{ $history->invoice_number }}</td>
-                                <td>{{ $history->book ? $history->book->title : 'Deleted Book' }}</td>
-                                <td>{{ $history->member->name }}</td>
-                                <td>{{ $history->price }}</td>
-                                <td>{{ $history->loan_date }}</td>
-                                <td>{{ $history->due_date }}</td>
-                                <td>{{ $history->renew_date ?? 'N/A' }}</td>
-                                <td>{{ $history->pay_date }}</td>
-                                <td>{{ $history->fine }}</td>
-                                <td>{{ $history->fine_reason }}</td>
-                                <td>
-                                    <a href="{{ route('loanBookHistories.show', $history->id) }}"
-                                        class="btn btn-warning btn-sm">Details</a>
+                            <tr>
+                                <td class="text-center">{{ $history->invoice_number }}</td>
+                                <td class="text-center">{{ $history->book->isbn }}</td>
+                                <td class="text-center">{{ $history->book ? $history->book->title : 'Deleted Book' }}</td>
+                                <td class="text-center">{{ $history->member->name }}</td>
+                                <td class="text-center">{{ $history->price }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($history->loan_date)->format('Y-d-m') }}</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($history->due_date)->format('Y-d-m') }}</td>
+                                <td class="text-center">{{ $history->renew_date ? \Carbon\Carbon::parse($history->renew_date)->format('Y-d-m') : 'N/A' }}</td>
+                                <td class="text-center">{{ $history->pay_date ? \Carbon\Carbon::parse($history->pay_date)->format('Y-d-m') : 'N/A' }}</td>
+                                <td class="text-center">{{ $history->fine }}</td>
+                                <td class="text-center">{{ $history->fine_reason }}</td>
+                                <td class="text-center">
+                                    <a href="{{ route('loanBookHistories.show', $history->id) }}" class="btn btn-warning btn-sm">ព័ត៌មាន</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -50,35 +51,6 @@
 @endsection
 
 @push('scripts')
-    {{-- <script>
-    $(document).ready(function() {
-        $('#datatablesSimpleQ').DataTable({
-            dom: 'Bfrtip',
-            pageLength: 5,
-            responsive: true, // Enable responsive extension
-            buttons: [
-                {
-                    extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i> Excel',
-                    titleAttr: 'Export to Excel',
-                    className: 'btn btn-success'
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="fas fa-file-pdf"></i> PDF',
-                    titleAttr: 'Export to PDF',
-                    className: 'btn btn-danger'
-                },
-                {
-                    extend: 'print',
-                    text: '<i class="fas fa-print"></i> Print',
-                    titleAttr: 'Print',
-                    className: 'btn btn-primary'
-                }
-            ]
-        });
-    });
-</script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const datatablesSimpleA = document.getElementById('datatablesSimpleQ');
@@ -89,41 +61,36 @@
                     pageLength: 3,
                     responsive: true,
                     buttons: [
-
                         {
-                            extend: 'excelHtml5',
-                            text: '<i class="fas fa-file-excel"></i> Excel',
-                            titleAttr: 'Export to Excel',
-                            className: 'btn btn-success'
-                        },
-                        {
-                            extend: 'pdfHtml5',
-                            text: '<i class="fas fa-file-pdf"></i> PDF',
-                            titleAttr: 'Export to PDF',
-                            className: 'btn btn-danger'
+                        extend: 'excelHtml5',
+                            text: '<i class="fas fa-file-excel"></i> Export Excel',
+                            className: 'btn btn-secondary btn-custom',
+                            
                         },
                         {
                             extend: 'print',
                             text: '<i class="fas fa-print"></i> Print',
                             titleAttr: 'Print',
-                            className: 'btn btn-primary'
+                            className: 'btn btn-secondary btn-custom'
                         }
-
                     ],
                     language: {
-                        search: "Search:", // Custom text for the search input
-                        searchPlaceholder: "Type to search..." // Placeholder text
-                    },
-                    language: {
+                        search: '',
+                        searchPlaceholder: 'ស្វែងរក...',
                         paginate: {
                             previous: '<i class="fas fa-chevron-left"></i> Previous',
                             next: 'Next <i class="fas fa-chevron-right"></i>'
                         }
                     }
-
                 });
-
             }
         });
     </script>
+    <style>
+        .btn-custom {
+            padding: 5px 10px;
+            font-size: 12px;
+
+        }
+    </style>
 @endpush

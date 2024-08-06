@@ -26,7 +26,8 @@
                             <label for="title">ចំណងជើង</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
-                                <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required>
+                                <input type="text" name="title" id="title" class="form-control"
+                                    value="{{ old('title') }}" required>
                             </div>
                         </div>
                     </div>
@@ -35,7 +36,8 @@
                         <div class="form-group mb-3">
                             <label for="author_id" class="form-label">អ្នកនិពន្ធ</label>
                             <div class="input-group">
-                                <span class="input-group-text" style="width: 40px;"><i class="fa-solid fa-user-pen"></i></span>
+                                <span class="input-group-text" style="width: 40px;"><i
+                                        class="fa-solid fa-user-pen"></i></span>
                                 <select class="form-control select2" id="author_id" name="author_id" required>
                                     <option value="">ជ្រើសរើសអ្នកនិពន្ធ</option>
                                     @foreach ($authors as $author)
@@ -43,7 +45,8 @@
                                     @endforeach
                                 </select>
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-outline-secondary" id="btn-search-authors" data-bs-toggle="modal" data-bs-target="#addAuthorModal">
+                                    <button type="button" class="btn btn-outline-secondary" id="btn-search-authors"
+                                        data-bs-toggle="modal" data-bs-target="#addAuthorModal">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
@@ -57,8 +60,10 @@
                         <div class="form-group mb-3">
                             <label for="isbn">លេខកូដ</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-book-bookmark"></i></span>
-                                <input type="text" name="isbn" id="isbn" class="form-control" value="{{ old('isbn') }}" required>
+                                <span class="input-group-text d-flex align-items-center justify-content-center"
+                                    style="width: 40px;"><i class="fa-solid fa-code"></i></span>
+                                <input type="text" name="isbn" id="isbn" class="form-control"
+                                    value="{{ old('isbn') }}" required>
                             </div>
                         </div>
                     </div>
@@ -68,12 +73,47 @@
                             <label for="publication_date">បោះពុម្ពផ្សាយ</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-book-atlas"></i></span>
-                                <input type="date" name="publication_date" id="publication_date" class="form-control" value="{{ old('publication_date') }}">
+                                <input type="date" name="publication_date" id="publication_date" class="form-control"
+                                    value="{{ old('publication_date') }}">
                             </div>
                         </div>
                     </div>
                 </div>
-    
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="quantity">ចំនួន</label>
+                            <div class="input-group">
+                                <span class="input-group-text d-flex align-items-center justify-content-center"
+                                    style="width: 40px;"><i class="fa-solid fa-cubes"></i></span>
+                                <input type="number" name="quantity" id="quantity" class="form-control"
+                                    value="{{ old('quantity') }}" min="1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="subject_id">ប្រភេទ</label>
+                            <div class="input-group">
+                                <span class="input-group-text d-flex align-items-center justify-content-center"
+                                    style="width: 40px;"><i class="fa-sharp fa-light fa-layer-group"></i></span>
+                            <select class="form-control" id="subject_id" name="subject_id">
+                                <option value="">ប្រភេទ</option>
+                                @foreach ($subjects as $subject)
+                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="cover_image">រូបភាពក្រប</label>
+                    <input type="file" name="cover_image" id="cover_image" class="form-control">
+                </div>
+
                 <div class="form-group mb-3">
                     <label for="description">ព័ត៌មានបន្ថែប</label>
                     <div class="input-group">
@@ -81,10 +121,7 @@
                         <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
                     </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="cover_image " >រូបភាពក្រប</label>
-                    <input type="file" name="cover_image" id="cover_image" class="form-control" >
-                </div>
+
 
                 <button type="submit" class="btn btn-success">រក្សាទុក</button>
             </form>
@@ -92,7 +129,8 @@
     </div>
 
     <!-- Modal for Adding Authors -->
-    <div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -120,7 +158,11 @@
                     theme: 'bootstrap-5'
                 });
             });
-
+            $(document).ready(function() {
+                $('#subject_id').select2({
+                    theme: 'bootstrap-5'
+                });
+            });
             document.getElementById('addAuthorForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const name = document.getElementById('authorName').value;

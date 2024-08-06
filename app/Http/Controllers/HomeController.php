@@ -33,13 +33,17 @@ class HomeController extends Controller
         $loanBookCount = LoanBook::count();
         $loans = LoanBook::all();
         $currentDate = Carbon::now()->toDateString();
-        
-        // Retrieve overdue books
+        $totalQuantity = Book::sum('quantity'); 
+        $borrowedQuantity = LoanBook::whereNull('returned_at')->sum('quantity');
+
+        $totalLoanedBooks = LoanBook::where('status', 'borrowed')
+        ->sum('quantity'); // Sum the quantity of loaned books
+
         $overdueBooks = LoanBook::where('due_date', '<', $currentDate)
             ->where('status', 'borrowed')
             ->get();
     
-        // Calculate overdue fines
+       
         $overdueDetails = $overdueBooks->map(function ($loan) {
             $daysOverdue = Carbon::parse($loan->due_date)->diffInDays(Carbon::now());
             $fine = $daysOverdue * 5; // Example fine rate: $5 per overdue day
@@ -56,9 +60,9 @@ class HomeController extends Controller
           $totalOverdueBooks = $overdueDetails->count();
           $totalFine = $overdueDetails->sum('fine');
       
-    
+          $availableQuantity = $totalQuantity + $borrowedQuantity;
         
-            return view('dashboard.index', compact('bookCount', 'memberCount', 'loanBookCount', 'loans','totalOverdueBooks'));
+            return view('dashboard.index', compact('bookCount', 'memberCount','totalLoanedBooks','loanBookCount', 'loans','totalOverdueBooks','totalQuantity','availableQuantity'));
         }
      
 }

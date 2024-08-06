@@ -10,7 +10,7 @@
                 <div class="card bg-c-blue order-card">
                     <div class="card-block">
                         <h6 class="m-b-20">សៀវភៅ</h6>
-                        <h2 class="text-right"><i class="fa fa-book f-left"></i><span>{{ $bookCount }}</span></h2>
+                        <h2 class="text-right"><i class="fa fa-book f-left"></i><span>{{ $availableQuantity }}</span></h2>
                         <a href="{{ route('books.index') }}" class="stretched-link"></a>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                     <div class="card-block">
                         <h6 class="m-b-20">អ្នកខ្ចីសៀវភៅ</h6>
                         <h2 class="text-right"> <i
-                                class="fa-solid fa-book-open-reader f-left"></i><span>{{ $loanBookCount }}</span></h2>
+                                class="fa-solid fa-book-open-reader f-left"></i><span>{{ $totalLoanedBooks }}</span></h2>
                         <a href="{{ route('loans.index') }}" class="stretched-link"></a>
 
                     </div>
@@ -44,7 +44,7 @@
                     <div class="card-block">
                         <h6 class="m-b-20">កំណត់សង</h6>
                         <h2 class="text-right"><i class="fa fa-credit-card f-left"></i><span>{{$totalOverdueBooks}}</span></h2>
-                        <a href="{{ route('loans.indexloan') }}" class="stretched-link"></a>
+                        <a href="{{ route('loans.overdueBooksReport') }}" class="stretched-link"></a>
 
                     </div>
                 </div>
@@ -126,4 +126,5 @@
             </table>
         </div>
     </div>
+    
 @endsection

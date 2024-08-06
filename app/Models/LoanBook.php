@@ -22,6 +22,7 @@ class LoanBook extends Model
         'pay_date',
         'fine',
         'fine_reason',
+        'quantity',
     ];
     protected $casts = [
         'loan_date' => 'datetime',
@@ -41,20 +42,19 @@ class LoanBook extends Model
     {
         return $this->hasMany(LoanBookHistory::class);
     }
-    // public function isDueTomorrow()
-    // {
-    //     $tomorrow = now()->addDay()->startOfDay();
-    //     return $this->due_date->is($tomorrow);
-    // }
+    public function study()
+    {
+        return $this->belongsTo(Study::class);
+    }
 
-    // public function isRenewTomorrow()
-    // {
-    //     $tomorrow = now()->addDay()->startOfDay();
-    //     return $this->renew_date && $this->renew_date->is($tomorrow);
-    // }
-    // public function isOverdue()
-    // {
-    //     return $this->due_date->isPast();
-    // }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
 
 }

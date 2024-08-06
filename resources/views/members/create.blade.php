@@ -29,7 +29,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-6">
                                 <label for="gender">ភេទ</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-mars-and-venus"></i></span>
@@ -41,7 +41,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="phone">លេខទូរស័ព្ទ </label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
@@ -49,8 +49,9 @@
                                         value="{{ old('phone') }}">
                                 </div>
                             </div>
-
-                            <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="study_id">ឆ្នាំសិក្សា</label>
                                 <select id="study_id" name="study_id" class="form-control" required>
                                     <option value="">ជ្រើសរើស</option>
@@ -59,7 +60,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="category_id">ជំនាញ</label>
                                 <select id="category_id" name="category_id" class="form-control" required>
                                     <option value="">ជ្រើសរើស</option>
@@ -69,6 +70,16 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="image">រូបភាព</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-image"></i></span>
+                                    <input type="file" id="image" name="image" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-success">រក្សាទុក</button>
                         <a href="{{ route('members.index') }}" class="btn btn-outline-success">បោះបង់</a>
                     </form>

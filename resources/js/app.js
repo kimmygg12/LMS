@@ -10,3 +10,6 @@ $(document).ready(function() {
         window.location.href = $(this).data('href');
     });
 });
+$('#collapseExample').collapse('show');
+$('#collapseExample').collapse('hide');
+$('#collapseExample').collapse('toggle');

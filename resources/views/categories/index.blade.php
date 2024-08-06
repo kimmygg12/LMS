@@ -2,39 +2,86 @@
 
 @section('content')
 <div class="container">
-    <h1>Categories</h1>
+    <h1 class="mb-4">Categories</h1>
     
+    <!-- Success Message -->
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
 
+    <!-- Create Category Button -->
     <a href="{{ route('categories.create') }}" class="btn btn-primary mb-3">Create Category</a>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($categories as $category)
+    <!-- Table Container -->
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td>{{ $category->name }}</td>
-                    <td>
-                        <a href="{{ route('categories.show', $category->id) }}" class="btn btn-info">View</a>
-                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-secondary">Edit</a>
-                        <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                        </form>
-                    </td>
+                    <th>Name</th>
+                    <th>Actions</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($categories as $category)
+                    <tr>
+                        <td>{{ $category->name }}</td>
+                        <td>
+                            <!-- Action Buttons -->
+                            <a href="{{ route('categories.show', $category->id) }}" class="btn btn-info btn-sm">View</a>
+                            <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                            
+                            <!-- Delete Form -->
+                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevent the form from submitting immediately
+                    const form = e.target;
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Submit the form if confirmed
+                        }
+                    });
+                });
+            });
+
+            // Display a success alert if the success session is set
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#3085d6'
+                });
+            @endif
+        });
+    </script>
+@endpush

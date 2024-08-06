@@ -448,6 +448,7 @@
                                             <th scope="col">កូដ</th>
                                             <th scope="col">ចំណងជើង</th>
                                              <th scope="col">Author</th> 
+                                            <th scope="col">ប្រភេទ</th>
                                             <th scope="col">ប្រាក់កក់</th>
                                         </tr>
                                     </thead>
@@ -456,6 +457,7 @@
                                             <td>${data.isbn}</td>
                                             <td>${data.book_title}</td>
                                             <td>${data.author} </td>
+                                            <td>${data.subject} </td>
                                             <td>${data.price || 'N/A'}</td>
                                         </tr>
                                     </tbody>

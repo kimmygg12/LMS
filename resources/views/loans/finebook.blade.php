@@ -24,47 +24,63 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="title">ចំណងជើង</label>
-                        <input type="text" name="title" id="title" class="form-control"
-                            value="{{ old('title', $loan->book->title) }}" readonly>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa-solid fa-book"></i>
+                            </span>
+                            <input type="text" name="title" id="title" class="form-control"
+                                value="{{ old('title', $loan->book->title) }}" readonly>
 
-                        @error('title')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
+                            @error('title')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="member_id">លេខសម្គាល់និងឈ្មោះ</label>
-                        <input type="text" name="member_id" id="member_id" class="form-control"
-                            value="{{ old('member_id', $loan->member->memberId) }} - {{ old('member_id', $loan->member->name) }}"
-                            readonly>
+                        <div class="input-group">
+                            <span class="input-group-text" style="width: 40px;">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" name="member_id" id="member_id" class="form-control"
+                                value="{{ old('member_id', $loan->member->memberId) }} - {{ old('member_id', $loan->member->name) }}"
+                                readonly>
 
-                        @error('member_id')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
+                            @error('member_id')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="loan_date">ថ្ងៃខ្ចី</label>
-                        <input type="date" name="loan_date" id="loan_date" class="form-control"
-                            value="{{ old('loan_date', $loan->loan_date->format('Y-m-d')) }}" readonly>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                            <input type="date" name="loan_date" id="loan_date" class="form-control"
+                                value="{{ old('loan_date', $loan->loan_date->format('Y-m-d')) }}" readonly>
 
-                        @error('loan_date')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
+                            @error('loan_date')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-
 
                     <div class="col-md-6 mb-3">
                         <label for="due_date">ថ្ងៃកំណត់សង</label>
-                        <input type="date" name="due_date" id="due_date" class="form-control"
-                            value="{{ old('due_date', $loan->due_date->format('Y-m-d')) }}" readonly>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                            <input type="date" name="due_date" id="due_date" class="form-control"
+                                value="{{ old('due_date', $loan->due_date->format('Y-m-d')) }}" readonly>
 
-                        @error('due_date')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
+                            @error('due_date')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-
                     <div class="col-md-6 mb-3">
                         <label for="renew_date">ខ្ចីបន្តដល់ថ្ងៃ</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" name="renew_date" id="renew_date" class="form-control"
                             value="{{ old('renew_date', $loan->renew_date ? $loan->renew_date->format('Y-m-d') : '') }}">
 
@@ -72,9 +88,11 @@
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
-
+                    </div>
                     <div class="col-md-6 mb-3">
                         <label for="pay_date">ថ្ងៃសង</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" name="pay_date" id="pay_date" class="form-control"
                             value="{{ old('pay_date') }}">
 
@@ -82,8 +100,13 @@
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <label for="price">ប្រាក់កក់</label>
+                        <div class="input-group">
+                            <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;">
+                                <i class="fa-sharp fa-solid fa-dollar-sign"></i>
+                            </span>
                         <input type="number" name="price" id="price" class="form-control"
                             value="{{ old('price', $loan->price) }}" readonly>
 
@@ -91,14 +114,18 @@
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <label for="fine">ផាកពិន័យ</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-sharp-duotone fa-solid fa-money-bill"></i></span>
                         <input type="number" name="fine" id="fine" class="form-control"
                             value="{{ old('fine') }}">
 
                         @error('fine')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
+                    </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
@@ -116,5 +143,4 @@
             </form>
         </div>
     </div>
-
 @endsection

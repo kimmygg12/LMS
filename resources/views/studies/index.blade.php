@@ -2,39 +2,89 @@
 
 @section('content')
     <div class="container">
-        <h1>Studies List</h1>
+        <h1 class="mb-4">Studies List</h1>
+        
+        <!-- Add New Study Button -->
         <a href="{{ route('studies.create') }}" class="btn btn-primary mb-3">Add New Study</a>
+        
+        <!-- Success Message -->
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($studies as $study)
-                    <tr>
-                        <td>{{ $study->id }}</td>
-                        <td>{{ $study->name }}</td>
-                        <td>
-                            <a href="{{ route('studies.show', $study->id) }}" class="btn btn-info btn-sm">View</a>
-                            <a href="{{ route('studies.edit', $study->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('studies.destroy', $study->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
 
+        <!-- Table Container -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($studies as $study)
+                        <tr>
+                            <td>{{ $study->id }}</td>
+                            <td>{{ $study->name }}</td>
+                            <td>
+                                <!-- Action Buttons -->
+                                <a href="{{ route('studies.show', $study->id) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ route('studies.edit', $study->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                
+                                <!-- Delete Form -->
+                                <form action="{{ route('studies.destroy', $study->id) }}" method="POST" class="d-inline delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevent the form from submitting immediately
+                    const form = e.target;
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel',
+                        iconHtml: '<i class="fas fa-exclamation-triangle"></i>' // Custom icon
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Submit the form if confirmed
+                        }
+                    });
+                });
+            });
+
+            // Display a success alert if the success session is set
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    confirmButtonColor: '#3085d6'
+                });
+            @endif
+        });
+    </script>
+@endpush
