@@ -28,8 +28,8 @@
                         @foreach ($loanHistory as $history)
                             <tr>
                                 <td class="text-center">{{ $history->invoice_number }}</td>
-                                <td class="text-center">{{ $history->book->isbn }}</td>
-                                <td class="text-center">{{ $history->book ? $history->book->title : 'Deleted Book' }}</td>
+                                <td class="text-center">{{ $history->book ? $history->book->isbn : 'Deleted'}}</td>
+                                <td class="text-center">{{ $history->book ? $history->book->title : 'Deleted' }}</td>
                                 <td class="text-center">{{ $history->member->name }}</td>
                                 <td class="text-center">{{ $history->price }}</td>
                                 <td class="text-center">{{ \Carbon\Carbon::parse($history->loan_date)->format('Y-d-m') }}</td>

@@ -3,7 +3,7 @@
 @section('content')
 <div class="card mt-3">
     <div class="card-header">
-        <h1>កែប្រែការខ្ចីសៀវភៅ</h1>
+        <h1>{{ __('messages.edit_loan') }}</h1>
     </div>
     <div class="card-body">
         @if (session('error'))
@@ -17,11 +17,11 @@
             <div class="row">
                 <!-- Book Dropdown -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="book_id" class="form-label">សៀវភៅ</label>
+                    <label for="book_id" class="form-label">{{ __('messages.book_list') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
                         <select id="book_id" name="book_id" class="form-control" required>
-                            <option value="">ជ្រើសរើសសៀវភៅ</option>
+                            <option value="">{{ __('messages.select_book') }}</option>
                             @foreach ($books as $book)
                                 <option value="{{ $book->id }}"
                                     {{ $book->id == $loan->book_id ? 'selected' : '' }}>
@@ -34,11 +34,11 @@
 
                 <!-- Member Dropdown -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="member_id" class="form-label">សិស្ស</label>
+                    <label for="member_id" class="form-label">{{ __('messages.student') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                         <select id="member_id" name="member_id" class="form-control" required>
-                            <option value="">ID សិស្ស</option>
+                            <option value="">{{ __('messages.student_id') }}</option>
                             @foreach ($members as $member)
                                 <option value="{{ $member->id }}"
                                     {{ $member->id == $loan->member_id ? 'selected' : '' }}>
@@ -51,7 +51,7 @@
 
                 <!-- Price Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="price">ប្រាក់កក់</label>
+                    <label for="price">{{ __('messages.deposit') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-sharp fa-solid fa-dollar-sign"></i></span>
                         <input type="number" id="price" name="price" class="form-control" value="{{ old('price', $loan->price) }}" required>
@@ -60,7 +60,7 @@
 
                 <!-- Loan Date Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="loan_date">ខ្ចីនៅថ្ងៃ</label>
+                    <label for="loan_date">{{ __('messages.loan_date') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" id="loan_date" name="loan_date" class="form-control" value="{{ old('loan_date', $loan->loan_date->format('Y-m-d')) }}" required>
@@ -69,14 +69,14 @@
 
                 <!-- Due Date Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="due_date">ថ្ងៃកំណត់</label>
+                    <label for="due_date">{{ __('messages.due_date') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" id="due_date" name="due_date" class="form-control" value="{{ old('due_date', $loan->due_date->format('Y-m-d')) }}" required>
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-success">រក្សាទុក</button>
+            <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
         </form>
     </div>
 </div>

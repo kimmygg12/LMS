@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Categories</h1>
+    <h1 class="mt-4 mb-4">{{ __('members.Skills') }}</h1>
     
     <!-- Success Message -->
     @if (session('success'))
@@ -12,7 +12,7 @@
     @endif
 
     <!-- Create Category Button -->
-    <a href="{{ route('categories.create') }}" class="btn btn-primary mb-3">Create Category</a>
+    <a href="{{ route('categories.create') }}" class="btn btn-success mb-3">បង្កើត</a>
 
     <!-- Table Container -->
     <div class="table-responsive">

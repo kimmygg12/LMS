@@ -39,26 +39,41 @@ class HomeController extends Controller
         $totalLoanedBooks = LoanBook::where('status', 'borrowed')
         ->sum('quantity'); // Sum the quantity of loaned books
 
-        $overdueBooks = LoanBook::where('due_date', '<', $currentDate)
-            ->where('status', 'borrowed')
-            ->get();
+        $overdueBooks = LoanBook::where(function ($query) use ($currentDate) {
+            $query->where(function ($query) use ($currentDate) {
+                    // Books with due_date before current date and no renewal
+                    $query->where('due_date', '<', $currentDate)
+                          ->whereNull('renew_date');
+                })
+                ->orWhere(function ($query) use ($currentDate) {
+                    // Books with a renewal date before current date
+                    $query->whereNotNull('renew_date')
+                          ->where('renew_date', '<', $currentDate);
+                });
+        })
+        ->where('status', 'borrowed')
+        ->get();
     
-       
-        $overdueDetails = $overdueBooks->map(function ($loan) {
-            $daysOverdue = Carbon::parse($loan->due_date)->diffInDays(Carbon::now());
-            $fine = $daysOverdue * 5; // Example fine rate: $5 per overdue day
+        // Calculate overdue fines
+        $overdueDetails = $overdueBooks->map(function ($loan) use ($currentDate) {
+            // Determine the actual due date considering renewals
+            $actualDueDate = isset($loan->renew_date) ? $loan->renew_date : $loan->due_date;
+            $daysOverdue = Carbon::parse($actualDueDate)->diffInDays(Carbon::now());
+            $fine = $daysOverdue * 500; // Example fine rate: $5 per overdue day
     
             return [
                 'member' => $loan->member,
                 'book' => $loan->book,
+                'loan_date' => $loan->loan_date,
                 'due_date' => $loan->due_date,
+                'renew_date' => $loan->renew_date,
                 'days_overdue' => $daysOverdue,
-                'fine' => $fine
+                'invoice_number' => $loan->invoice_number ,
+                'fine' => $fine,
+                'id' => $loan->id, // Add this line to include the loan
             ];
         });
-          // Calculate totals
-          $totalOverdueBooks = $overdueDetails->count();
-          $totalFine = $overdueDetails->sum('fine');
+        $totalOverdueBooks = $overdueBooks->count();
       
           $availableQuantity = $totalQuantity + $borrowedQuantity;
         

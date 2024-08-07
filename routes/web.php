@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
@@ -130,4 +131,9 @@ Route::delete('/authors/{author}', [AuthorController::class, 'destroy'])->name('
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 Route::get('/reports/combined', [ReportController::class, 'combinedReport'])->name('reports.combined');
 Route::get('/reports/combined', [ReportController::class, 'combinedReport'])->name('reports.combinedReport');
+
+Route::get('locale/{locale}', [LocaleController::class, 'set'])->name('locale.set');
+
+
+
 require __DIR__.'/auth.php';

@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">Studies List</h1>
+        <h1 class="mt-4 mb-4">{{ __('members.year') }}</h1>
         
         <!-- Add New Study Button -->
-        <a href="{{ route('studies.create') }}" class="btn btn-primary mb-3">Add New Study</a>
+        <a href="{{ route('studies.create') }}" class="btn btn-success mb-3">បង្កើត</a>
         
         <!-- Success Message -->
         @if (session('success'))

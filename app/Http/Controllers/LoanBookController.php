@@ -155,13 +155,6 @@ class LoanBookController extends Controller
             $previousBook->save();
         }
 
-        // Update the status of the new book
-        // if ($newBook) {
-        //     $newBook->quantity -= 1;
-        //     $newBook->status = $newBook->quantity > 0 ? 'available' : 'borrowed';
-        //     $newBook->save();
-        // }
-
         return redirect()->route('loans.index');
     }
 
@@ -321,12 +314,16 @@ class LoanBookController extends Controller
     
         // Retrieve overdue books
         $overdueBooks = LoanBook::where(function ($query) use ($currentDate) {
-            $query->where('due_date', '<', $currentDate)
-                  ->orWhere(function ($query) use ($currentDate) {
-                      // Consider renewed due dates
-                      $query->whereNotNull('renew_date')
-                            ->where('renew_date', '<', $currentDate);
-                  });
+            $query->where(function ($query) use ($currentDate) {
+                    // Books with due_date before current date and no renewal
+                    $query->where('due_date', '<', $currentDate)
+                          ->whereNull('renew_date');
+                })
+                ->orWhere(function ($query) use ($currentDate) {
+                    // Books with a renewal date before current date
+                    $query->whereNotNull('renew_date')
+                          ->where('renew_date', '<', $currentDate);
+                });
         })
         ->where('status', 'borrowed')
         ->get();
@@ -350,8 +347,8 @@ class LoanBookController extends Controller
                 'id' => $loan->id, // Add this line to include the loan
             ];
         });
-    
-        return view('loans.overdueBooksReport', compact('overdueDetails','loans'));
+        $totalOverdueBooks = $overdueBooks->count();
+        return view('loans.overdueBooksReport', compact('overdueDetails','loans','totalOverdueBooks'));
     }
     
 

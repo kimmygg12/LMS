@@ -33,8 +33,7 @@ class BookController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
         }
-
-        $books = $query->with('author')->paginate(3);
+        $books = $query->with('author', 'subject')->paginate(3);
         $newBooks = Book::orderBy('created_at', 'desc')->limit(1)->get();
         return view('books.index', compact('books', 'newBooks', 'search'))->with('i', (request()->input('page', 1) - 1) * 5);
     }

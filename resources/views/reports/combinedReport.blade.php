@@ -332,8 +332,8 @@
                     @foreach ($historyData as $history)
                         <tr>
                             <td class="text-center">{{ $history->invoice_number }}</td>
-                            <td class="text-center">{{ $history->book->isbn }}</td>
-                            <td class="text-center">{{ $history->book ? $history->book->title : 'Deleted Book' }}</td>
+                            <td class="text-center">{{$history->book ? $history->book->isbn : 'Deleted' }}</td>
+                            <td class="text-center">{{ $history->book ? $history->book->title : 'Deleted' }}</td>
                             <td class="text-center">{{ $history->member ? $history->member->name : 'Unknown Member' }}</td>
                             <td class="text-center">{{ $history->member ? $history->member->study->name : 'Unknown' }}</td>
                             <td class="text-center">{{ $history->member ? $history->member->category->name : 'Unknown' }}

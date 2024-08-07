@@ -17,3 +17,28 @@
     text-align: center; /* Center the text */
     color: #888; /* Optional: Change text color */
 }
+/* app.css */
+
+.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+}
+
+.dark-mode .card-header {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+.dark-mode .btn {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+.dark-mode .btn:hover {
+    background-color: #555;
+}

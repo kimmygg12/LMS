@@ -3,7 +3,7 @@
 @section('content')
     <div class="card mt-3">
         <div class="card-header">
-            <h2>បន្ថែមសៀវភៅថ្មី</h2>
+            <h2>{{ __('books.book_list') }}</h2>
         </div>
         <div class="card-body">
             @if (session('error'))
@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="title">ចំណងជើង</label>
+                            <label for="title">{{ __('books.title') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
                                 <input type="text" name="title" id="title" class="form-control"
@@ -34,12 +34,12 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="author_id" class="form-label">អ្នកនិពន្ធ</label>
+                            <label for="author_id" class="form-label">{{ __('books.author') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text" style="width: 40px;"><i
                                         class="fa-solid fa-user-pen"></i></span>
                                 <select class="form-control select2" id="author_id" name="author_id" required>
-                                    <option value="">ជ្រើសរើសអ្នកនិពន្ធ</option>
+                                    <option value="">{{ __('books.select_author') }}</option>
                                     @foreach ($authors as $author)
                                         <option value="{{ $author->id }}">{{ $author->name }}</option>
                                     @endforeach
@@ -58,7 +58,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="isbn">លេខកូដ</label>
+                            <label for="isbn">{{ __('books.isbn') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text d-flex align-items-center justify-content-center"
                                     style="width: 40px;"><i class="fa-solid fa-code"></i></span>
@@ -70,7 +70,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="publication_date">បោះពុម្ពផ្សាយ</label>
+                            <label for="publication_date">{{ __('books.publication_date') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-book-atlas"></i></span>
                                 <input type="date" name="publication_date" id="publication_date" class="form-control"
@@ -83,7 +83,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="quantity">ចំនួន</label>
+                            <label for="quantity">{{ __('books.quantity') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text d-flex align-items-center justify-content-center"
                                     style="width: 40px;"><i class="fa-solid fa-cubes"></i></span>
@@ -95,35 +95,34 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="subject_id">ប្រភេទ</label>
+                            <label for="subject_id">{{ __('books.subject') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text d-flex align-items-center justify-content-center"
                                     style="width: 40px;"><i class="fa-sharp fa-light fa-layer-group"></i></span>
-                            <select class="form-control" id="subject_id" name="subject_id">
-                                <option value="">ប្រភេទ</option>
-                                @foreach ($subjects as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                @endforeach
-                            </select>
+                                <select class="form-control" id="subject_id" name="subject_id">
+                                    <option value="">{{ __('books.subject') }}</option>
+                                    @foreach ($subjects as $subject)
+                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="cover_image">រូបភាពក្រប</label>
+                    <label for="cover_image">{{ __('books.cover_image') }}</label>
                     <input type="file" name="cover_image" id="cover_image" class="form-control">
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="description">ព័ត៌មានបន្ថែប</label>
+                    <label for="description">{{ __('books.additional_info') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-not-equal"></i></span>
                         <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
                     </div>
                 </div>
 
-
-                <button type="submit" class="btn btn-success">រក្សាទុក</button>
+                <button type="submit" class="btn btn-success">{{ __('books.save') }}</button>
             </form>
         </div>
     </div>
@@ -134,17 +133,17 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addAuthorModalLabel">បន្ថែមអ្នកនិពន្ធថ្មី។</h5>
+                    <h5 class="modal-title" id="addAuthorModalLabel">{{ __('books.add_author') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addAuthorForm">
                         <div class="mb-3">
-                            <label for="authorName" class="form-label">ឈ្មោះអ្នកនិពន្ធ</label>
+                            <label for="authorName" class="form-label">{{ __('books.author') }}</label>
                             <input type="text" class="form-control" id="authorName" name="name" required>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">រក្សាទុក</button>
+                            <button type="submit" class="btn btn-success">{{ __('books.save') }}</button>
                         </div>
                     </form>
                 </div>

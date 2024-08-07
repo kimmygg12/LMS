@@ -13,6 +13,7 @@ class LoanBookHistory extends Model
         'book_id',
         'member_id',
         'price',
+        'isbn',
         'loan_date',
         'due_date',
         'pay_date',
