@@ -1,6 +1,7 @@
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="{{ route('dashboard') }}">គ្រប់គ្រងបណ្ណាល័យ</a>
+    <a class="navbar-brand ps-3" href="{{ route('dashboard') }}">{{ __('messages.library_management') }}</a>
+
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
             class="fas fa-bars"></i></button>
@@ -38,7 +39,7 @@
                     <img src="{{ asset('images/en.jpg') }}" alt="English" style="width: 20px; height: 15px;"> English
                 </a>
                 <a class="dropdown-item" href="{{ route('locale.set', ['locale' => 'kh']) }}">
-                    <img src="{{ asset('images/kh.png') }}" alt="Khmer" style="width: 20px; height: 15px;"> Khmer
+                    <img src="{{ asset('images/kh.png') }}" alt="Khmer" style="width: 20px; height: 15px;"> ខ្មែរ
                 </a>
             </div>
         </li>

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
     <x-slot name="header">
@@ -25,6 +25,31 @@
                 <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')
                 </div>
+            </div>
+        </div>
+    </div>
+@endsection --}}
+@extends('layouts.app')
+
+@section('content')
+    <div class="mt-4 mb-4">
+        <h2 class="font-weight-bold mb-4">{{ __('Profile') }}</h2>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                @include('profile.partials.update-profile-information-form')
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                @include('profile.partials.update-password-form')
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                @include('profile.partials.delete-user-form')
             </div>
         </div>
     </div>

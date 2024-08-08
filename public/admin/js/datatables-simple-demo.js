@@ -13,7 +13,9 @@ window.addEventListener('DOMContentLoaded', event => {
             perPageSelect: [2, 5, 10, 15, 20],
             perPage: 5,
             labels: {
-                placeholder: "ស្វែងរក...",
+                // placeholder: "ស្វែងរក...",
+                placeholder: "Search...",
+
                 perPage: "",
                 // noRows: "មិនមានទិន្នន័យនៅក្នុងតារាងទេ",
                 noRows: "",

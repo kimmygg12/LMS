@@ -3,8 +3,8 @@
 @section('content')
     <div class="card mt-3">
         <div class="card-header">
-            <h2>Subjects</h2>
-            <a href="{{ route('subjects.create') }}" class="btn btn-primary float-end">Add New Subject</a>
+            <h2>{{(__('books.subject'))}}</h2>
+            <a href="{{ route('subjects.create') }}" class="btn btn-success float-end">{{__('members.Create_list')}}</a>
         </div>
         <div class="card-body">
             @if (session('success'))

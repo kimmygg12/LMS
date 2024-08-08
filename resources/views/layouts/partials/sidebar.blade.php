@@ -1,7 +1,7 @@
 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
     <div class="sb-sidenav-menu">
         <div class="nav">
-            <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
+            <a class="nav-link {{ request()->routeIs('home','profile.edit') ? 'active' : '' }}" href="{{ route('home') }}">
                 <div class="sb-nav-link-icon"><i class="fa-solid fa-house"></i></div>
                 {{ __('messages.home') }}
             </a>
@@ -50,7 +50,7 @@
                 </nav>
             </div>
 
-            <a class="nav-link {{ request()->routeIs('loans.index', 'loans.create', 'loans.finebook.form') ? 'active' : '' }}"
+            <a class="nav-link {{ request()->routeIs('loans.index', 'loans.create', 'loans.finebook.form','loans.edit') ? 'active' : '' }}"
                 href="{{ route('loans.index') }}">
                 <div class="sb-nav-link-icon"><i class="fa-solid fa-book-open-reader"></i></div>
                 {{ __('messages.loans') }}
@@ -68,7 +68,7 @@
 
             <div class="sb-sidenav-menu-heading"><i class="fa-solid fa-database"></i> {{ __('messages.reports') }}</div>
 
-            <a class="nav-link {{ request()->routeIs('reports.combined') ? 'active' : '' }}"
+            <a class="nav-link {{ request()->routeIs('reports.combinedReport') ? 'active' : '' }}"
                 href="{{ route('reports.combinedReport') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                 {{ __('messages.combined_reports') }}

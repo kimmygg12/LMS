@@ -51,7 +51,7 @@
 
                 <!-- Price Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="price">{{ __('messages.deposit') }}</label>
+                    <label for="price">{{ __('messages.price') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-sharp fa-solid fa-dollar-sign"></i></span>
                         <input type="number" id="price" name="price" class="form-control" value="{{ old('price', $loan->price) }}" required>

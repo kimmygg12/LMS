@@ -12,7 +12,7 @@
     @endif
 
     <!-- Create Category Button -->
-    <a href="{{ route('categories.create') }}" class="btn btn-success mb-3">បង្កើត</a>
+    <a href="{{ route('categories.create') }}" class="btn btn-success mb-3">{{__('members.Create_list')}}</a>
 
     <!-- Table Container -->
     <div class="table-responsive">
@@ -29,7 +29,7 @@
                         <td>{{ $category->name }}</td>
                         <td>
                             <!-- Action Buttons -->
-                            <a href="{{ route('categories.show', $category->id) }}" class="btn btn-info btn-sm">View</a>
+                            {{-- <a href="{{ route('categories.show', $category->id) }}" class="btn btn-info btn-sm">View</a> --}}
                             <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-secondary btn-sm">Edit</a>
                             
                             <!-- Delete Form -->

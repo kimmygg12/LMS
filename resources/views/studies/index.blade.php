@@ -5,8 +5,7 @@
         <h1 class="mt-4 mb-4">{{ __('members.year') }}</h1>
         
         <!-- Add New Study Button -->
-        <a href="{{ route('studies.create') }}" class="btn btn-success mb-3">បង្កើត</a>
-        
+        <a href="{{ route('studies.create') }}" class="btn btn-success mb-3">{{__('members.Create_list')}}</a>
         <!-- Success Message -->
         @if (session('success'))
             <div class="alert alert-success">
@@ -31,7 +30,7 @@
                             <td>{{ $study->name }}</td>
                             <td>
                                 <!-- Action Buttons -->
-                                <a href="{{ route('studies.show', $study->id) }}" class="btn btn-info btn-sm">View</a>
+                                {{-- <a href="{{ route('studies.show', $study->id) }}" class="btn btn-info btn-sm">View</a> --}}
                                 <a href="{{ route('studies.edit', $study->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                 
                                 <!-- Delete Form -->

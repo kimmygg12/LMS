@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Edit Category</h1>
+    <h1 class="mt-4 mb-4">{{ __('messages.edit_category') }}</h1>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -18,13 +18,11 @@
         @csrf
         @method('PUT')
         <div class="form-group">
-            <label for="name">Name</label>
+            <label for="name">{{ __('messages.nameskills') }}</label>
             <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $category->name) }}" required>
         </div>
 
-       
-
-        <button type="submit" class="btn btn-primary">Update Category</button>
+        <button type="submit" class="btn btn-primary">{{ __('messages.update_category') }}</button>
     </form>
 </div>
 @endsection

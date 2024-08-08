@@ -3,7 +3,7 @@
 @section('content')
 <div class="card mt-3">
     <div class="card-header">
-        <h1>ខ្ចីសៀវភៅ</h1>
+        <h1>{{ __('messages.borrow_book') }}</h1>
     </div>
     <div class="card-body">
         @if (session('error'))
@@ -15,11 +15,11 @@
             @csrf
             <div class="row">
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="isbn" class="form-label">កូដ</label>
+                    <label for="isbn" class="form-label">{{ __('messages.code') }}</label>
                     <div class="input-group">
                         <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;"><i class="fa-duotone fa-solid fa-code"></i></span>
                         <select id="isbn" name="isbn" class="form-control" required>
-                            <option value="">ជ្រើសរើសលេខសៀវភៅ</option>
+                            <option value="">{{ __('messages.select_book') }}</option>
                             @foreach ($books as $book)
                                 <option value="{{ $book->isbn }}" 
                                     data-id="{{ $book->id }}"
@@ -34,7 +34,7 @@
 
                 <!-- Book Title -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="title">ចំណងជើង</label>
+                    <label for="title">{{ __('messages.title') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
                     <input type="text" id="title" name="title" class="form-control" value="{{ old('title') }}" readonly>
@@ -43,7 +43,7 @@
 
                 <!-- Member Dropdown -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="member_id" class="form-label">សិស្ស</label>
+                    <label for="member_id" class="form-label">{{ __('messages.student') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                         <select id="member_id" name="member_id" class="form-control" required>
@@ -60,7 +60,7 @@
 
                 <!-- Price Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="price">ប្រាក់កក់</label>
+                    <label for="price">{{ __('messages.price') }}</label>
                     <div class="input-group">
                         <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;">
                             <i class="fa-sharp fa-solid fa-dollar-sign"></i>
@@ -71,7 +71,7 @@
 
                 <!-- Loan Date Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="loan_date">ខ្ចីនៅថ្ងៃ</label>
+                    <label for="loan_date">{{ __('messages.loan_date') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" id="loan_date" name="loan_date" class="form-control" value="{{ old('loan_date') }}" required>
@@ -80,14 +80,14 @@
 
                 <!-- Due Date Input -->
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="due_date">ថ្ងៃកំណត់</label>
+                    <label for="due_date">{{ __('messages.due_date') }}</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
                         <input type="date" id="due_date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-success">រក្សាទុក</button>
+            <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
         </form>
     </div>
 </div>

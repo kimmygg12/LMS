@@ -1,4 +1,4 @@
-<section>
+{{-- <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Update Password') }}
@@ -42,6 +42,61 @@
                     x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600"
                 >{{ __('Saved.') }}</p>
+            @endif
+        </div>
+    </form>
+</section> --}}
+<section>
+    <header>
+        <h2 class="h4 mb-2">{{ __('messages.update_password') }}</h2>
+        <p class="text-muted">{{ __('messages.ensure_security') }}</p>
+    </header>
+
+    <form method="post" action="{{ route('password.update') }}" class="mt-4">
+        @csrf
+        @method('put')
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="current_password" class="form-label">{{ __('messages.current_password') }}</label>
+                <input id="current_password" name="current_password" type="password" class="form-control" autocomplete="current-password" />
+                @error('current_password')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="password" class="form-label">{{ __('messages.new_password') }}</label>
+                <input id="password" name="password" type="password" class="form-control" autocomplete="new-password" />
+                @error('password')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="password_confirmation" class="form-label">{{ __('messages.confirm_password') }}</label>
+                <input id="password_confirmation" name="password_confirmation" type="password" class="form-control" autocomplete="new-password" />
+                @error('password_confirmation')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
+
+            @if (session('status') === 'password-updated')
+                <p class="text-success mb-0">{{ __('messages.password_updated') }}</p>
             @endif
         </div>
     </form>

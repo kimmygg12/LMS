@@ -307,14 +307,58 @@ class LoanBookController extends Controller
         return ['start' => $start, 'end' => $end];
     }
 
+    // public function overdueBooksReport(Request $request)
+    // {
+    //     $loans =LoanBook::all();
+    //     $currentDate = Carbon::now()->toDateString();
+    
+    //     // Retrieve overdue books
+    //     $overdueBooks = LoanBook::where(function ($query) use ($currentDate) {
+    //         $query->where(function ($query) use ($currentDate) {
+    //                 // Books with due_date before current date and no renewal
+    //                 $query->where('due_date', '<', $currentDate)
+    //                       ->whereNull('renew_date');
+    //             })
+    //             ->orWhere(function ($query) use ($currentDate) {
+    //                 // Books with a renewal date before current date
+    //                 $query->whereNotNull('renew_date')
+    //                       ->where('renew_date', '<', $currentDate);
+    //             });
+    //     })
+    //     ->where('status', 'borrowed')
+    //     ->get();
+    
+    //     // Calculate overdue fines
+    //     $overdueDetails = $overdueBooks->map(function ($loan) use ($currentDate) {
+    //         // Determine the actual due date considering renewals
+    //         $actualDueDate = isset($loan->renew_date) ? $loan->renew_date : $loan->due_date;
+    //         $daysOverdue = Carbon::parse($actualDueDate)->diffInDays(Carbon::now());
+    //         $fine = $daysOverdue * 500; // Example fine rate: $5 per overdue day
+    
+    //         return [
+    //             'member' => $loan->member,
+    //             'book' => $loan->book,
+    //             'loan_date' => $loan->loan_date,
+    //             'due_date' => $loan->due_date,
+    //             'renew_date' => $loan->renew_date,
+    //             'days_overdue' => $daysOverdue,
+    //             'invoice_number' => $loan->invoice_number ,
+    //             'fine' => $fine,
+    //             'id' => $loan->id, // Add this line to include the loan
+    //         ];
+    //     });
+    //     $totalOverdueBooks = $overdueBooks->count();
+    //     return view('loans.overdueBooksReport', compact('overdueDetails','loans','totalOverdueBooks'));
+    // }
     public function overdueBooksReport(Request $request)
     {
-        $loans =LoanBook::all();
+        // Get current date
         $currentDate = Carbon::now()->toDateString();
-    
+        
         // Retrieve overdue books
-        $overdueBooks = LoanBook::where(function ($query) use ($currentDate) {
-            $query->where(function ($query) use ($currentDate) {
+        $overdueBooks = LoanBook::where('status', 'borrowed')
+            ->where(function ($query) use ($currentDate) {
+                $query->where(function ($query) use ($currentDate) {
                     // Books with due_date before current date and no renewal
                     $query->where('due_date', '<', $currentDate)
                           ->whereNull('renew_date');
@@ -324,16 +368,15 @@ class LoanBookController extends Controller
                     $query->whereNotNull('renew_date')
                           ->where('renew_date', '<', $currentDate);
                 });
-        })
-        ->where('status', 'borrowed')
-        ->get();
+            })
+            ->get();
     
         // Calculate overdue fines
         $overdueDetails = $overdueBooks->map(function ($loan) use ($currentDate) {
             // Determine the actual due date considering renewals
-            $actualDueDate = isset($loan->renew_date) ? $loan->renew_date : $loan->due_date;
+            $actualDueDate = $loan->renew_date ?? $loan->due_date;
             $daysOverdue = Carbon::parse($actualDueDate)->diffInDays(Carbon::now());
-            $fine = $daysOverdue * 500; // Example fine rate: $5 per overdue day
+            $fine = $daysOverdue * 500; // Example fine rate: $500 per overdue day
     
             return [
                 'member' => $loan->member,
@@ -342,15 +385,16 @@ class LoanBookController extends Controller
                 'due_date' => $loan->due_date,
                 'renew_date' => $loan->renew_date,
                 'days_overdue' => $daysOverdue,
-                'invoice_number' => $loan->invoice_number ,
+                'invoice_number' => $loan->invoice_number,
                 'fine' => $fine,
-                'id' => $loan->id, // Add this line to include the loan
+                'id' => $loan->id,
             ];
         });
-        $totalOverdueBooks = $overdueBooks->count();
-        return view('loans.overdueBooksReport', compact('overdueDetails','loans','totalOverdueBooks'));
-    }
     
+        $totalOverdueBooks = $overdueBooks->count();
+    
+        return view('loans.overdueBooksReport', compact('overdueDetails', 'totalOverdueBooks'));
+    }
 
     public function indexReport(Request $request)
     {
@@ -387,143 +431,5 @@ class LoanBookController extends Controller
         return view('loans.report_total', compact('totalLoans'));
     }
 
-    // public function topBorrowedBooksReport(Request $request)
-    // {
-    //     $startOfWeek = Carbon::now()->startOfWeek();
-    //     $endOfWeek = Carbon::now()->endOfWeek();
-    //     $startOfMonth = Carbon::now()->startOfMonth();
-    //     $endOfMonth = Carbon::now()->endOfMonth();
-    //     $startDate = $request->input('start_date', $startOfMonth);
-    //     $endDate = $request->input('end_date', $endOfMonth);
-    //     $topBorrowedBooks = LoanBook::whereBetween('loan_date', [$startDate, $endDate])
-    //         ->select('book_id', DB::raw('count(*) as total_borrowed'))
-    //         ->groupBy('book_id')
-    //         ->orderBy('total_borrowed', 'desc')
-    //         ->get()
-    //         ->map(function ($item) {
-    //             $book = Book::find($item->book_id);
-    //             $totalQuantity = $book->quantity; 
-    //         $quantityOnLoan = LoanBook::where('book_id', $item->book_id)
-    //             ->whereNull('pay_date')
-    //             ->count(); // Quantity currently on loan
-    //         $remainingQuantity = $totalQuantity + $quantityOnLoan; 
-    //             return [
-    //                 'book' => $book,
-    //                 'total_borrowed' => $item->total_borrowed,
-    //                 'remaining_quantity' => $remainingQuantity,
-    //                 'quantity_on_loan' => $quantityOnLoan,
-    //             ];
-    //         });
-
-    //     return view('loans.topBorrowedBooksReport', compact('topBorrowedBooks', 'startDate', 'endDate'));
-    // }
-    // public function Payments(Request $request)
-    // {
-    //     // Retrieve action from the request
-    //     $action = $request->input('action', 'loan'); // Default to loan
-
-    //     // Retrieve start and end dates from the request
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-
-    //     // Check for valid date range
-    //     if (!$startDate || !$endDate) {
-    //         return redirect()->back()->withErrors('Start date and end date are required.');
-    //     }
-
-    //     $dateRange = ['start' => $startDate, 'end' => $endDate];
-
-    //     // Define query based on action type
-    //     $query = LoanBook::whereBetween('loan_date', [$dateRange['start'], $dateRange['end']]);
-
-    //     if ($action === 'return') {
-    //         // Filter for returned loans
-    //         $query->whereNotNull('pay_date');
-    //     }
-
-    //     // Calculate total loans based on loan_date
-    //     $totalLoansByLoanDate = $query->count();
-
-    //     // Calculate total loans based on pay_date
-    //     $totalLoansByPayDate = LoanBook::whereBetween('pay_date', [$dateRange['start'], $dateRange['end']])->count();
-
-    //     // Fetch loan data for the selected period and action
-    //     $loans = $query->with('book', 'member', 'member.study', 'member.category')->get();
-
-    //     // Return the view with the data
-    //     return view('loans.Payments', compact('totalLoansByLoanDate', 'totalLoansByPayDate', 'action', 'loans'));
-    // }
-
-    // app/Http/Controllers/LoanBookController.php
-
-    // public function combinedReport(Request $request)
-    // {
-
-    //     $books = Book::all();
-    //     $action = $request->input('action', 'loan');
-    //     $startDate = Carbon::parse($request->input('start_date', Carbon::now()->startOfMonth()));
-    //     $endDate = Carbon::parse($request->input('end_date', Carbon::now()->endOfMonth()));
-
-    //     // Query LoanBook
-    //     $query = LoanBook::where(function ($query) use ($startDate, $endDate) {
-    //         $query->whereBetween('loan_date', [$startDate, $endDate])
-    //             ->orWhereBetween('pay_date', [$startDate, $endDate])
-    //             ->orWhereBetween('renew_date', [$startDate, $endDate]);
-    //     });
-    //     if ($action === 'return') {
-    //         $query->whereNotNull('pay_date');
-    //     }
-
-    //     $totalLoansByLoanDate = $query->count();
-    //     $totalLoansByPayDate = LoanBookHistory::whereBetween('pay_date', [$startDate, $endDate])->count();
-
-    //     // Filter LoanBook data based on action
-    //     $loans = ($action === 'loan' || $action === 'return')
-    //         ? $query->with('book', 'member', 'member.study', 'member.category')->get()
-    //         : collect();
-
-    //     $historyData = $action === 'return'
-    //         ? LoanBookHistory::whereBetween('loan_date', [$startDate, $endDate])
-    //             ->whereNotNull('pay_date')
-    //             ->with('book', 'member')
-    //             ->get()
-    //         : collect();
-
-    //     $topBorrowedBooks = $action === 'topBorrowedBooks'
-    //         ? LoanBook::whereBetween('loan_date', [$startDate, $endDate])
-    //             ->select('book_id', DB::raw('count(*) as total_borrowed'))
-    //             ->groupBy('book_id')
-    //             ->orderBy('total_borrowed', 'desc')
-    //             ->get()
-    //             ->map(function ($item) {
-    //                 $book = Book::find($item->book_id);
-    //                 $totalQuantity = $book->quantity;
-    //                 $quantityOnLoan = LoanBook::where('book_id', $item->book_id)
-    //                     ->whereNull('pay_date')
-    //                     ->count();
-    //                 $remainingQuantity = $totalQuantity + $quantityOnLoan;
-    //                 return [
-    //                     'book' => $book,
-    //                     'total_borrowed' => $item->total_borrowed,
-    //                     'remaining_quantity' => $remainingQuantity,
-    //                     'quantity_on_loan' => $quantityOnLoan,
-    //                 ];
-    //             })
-    //         : collect();
-
-    //     return view(
-    //         'loans.combinedReport',
-    //         compact(
-    //             'totalLoansByLoanDate',
-    //             'totalLoansByPayDate',
-    //             'action',
-    //             'loans',
-    //             'historyData',
-    //             'topBorrowedBooks',
-    //             'startDate',
-    //             'endDate'
-    //         )
-    //     );
-    // }
-
+   
 }

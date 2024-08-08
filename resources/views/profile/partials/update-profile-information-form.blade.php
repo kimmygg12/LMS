@@ -1,4 +1,4 @@
-<section>
+{{-- <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Profile Information') }}
@@ -58,6 +58,69 @@
                     x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600"
                 >{{ __('Saved.') }}</p>
+            @endif
+        </div>
+    </form>
+</section> --}}
+<section>
+    <header>
+        <h2 class="h4 mb-2">{{ __('messages.profile_information') }}</h2>
+        <p class="text-muted">{{ __("messages.update_account") }}</p>
+    </header>
+
+    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
+        @csrf
+    </form>
+
+    <form method="post" action="{{ route('profile.update') }}" class="mt-4">
+        @csrf
+        @method('patch')
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="name" class="form-label">{{ __('messages.name') }}</label>
+                <input id="name" name="name" type="text" class="form-control" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
+                @error('name')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="email" class="form-label">{{ __('messages.email') }}</label>
+                <input id="email" name="email" type="email" class="form-control" value="{{ old('email', $user->email) }}" required autocomplete="username" />
+                @error('email')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+                @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+                    <div class="mt-2">
+                        <p class="text-muted">
+                            {{ __('messages.unverified_email') }}
+                            <button form="send-verification" class="btn btn-link p-0">
+                                {{ __('messages.resend_verification') }}
+                            </button>
+                        </p>
+
+                        @if (session('status') === 'verification-link-sent')
+                            <p class="mt-2 text-success">
+                                {{ __('messages.new_verification_sent') }}
+                            </p>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
+
+            @if (session('status') === 'profile-updated')
+                <p class="text-success mb-0">{{ __('messages.saved') }}</p>
             @endif
         </div>
     </form>

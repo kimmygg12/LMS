@@ -4,24 +4,24 @@
     <div class="mt-4">
         <div class="card mt-3 mb-3">
             <div class="card-header ">
-                <h2 class="card-title mt-3 mb-3">សៀវភៅដែលបានសង</h2>
+                <h2 class="card-title mt-3 mb-3">{{ __('messages.loan_history') }}</h2>
             </div>
             <div class="card-body">
                 <table id="datatablesSimpleQ" class="display nowrap" style="width:100%">
                     <thead>
                         <tr>
-                            <th class="text-center">លេខ​វិ​ក័​យ​ប័ត្រ</th>
-                            <th class="text-center">កូដ</th>
-                            <th class="text-center">ចំណងជើង</th>
-                            <th class="text-center">ឈ្មោះ</th>
-                            <th class="text-center">ប្រាក់កក់</th>
-                            <th class="text-center">ថ្ងៃខ្ចី</th>
-                            <th class="text-center">ថ្ងៃកំណត់</th>
-                            <th class="text-center">ខ្ចីបន្ត</th>
-                            <th class="text-center">ថ្ងៃសង</th>
-                            <th class="text-center">ផាកពិន័យ</th>
-                            <th class="text-center">មូលហេតុ</th>
-                            <th class="text-center">ប៊ូតុង</th>
+                            <th class="text-center">{{ __('messages.invoice_number') }}</th>
+                            <th class="text-center">{{ __('messages.code') }}</th>
+                            <th class="text-center">{{ __('messages.title') }}</th>
+                            <th class="text-center">{{ __('messages.name') }}</th>
+                            <th class="text-center">{{ __('messages.price') }}</th>
+                            <th class="text-center">{{ __('messages.loan_date') }}</th>
+                            <th class="text-center">{{ __('messages.due_date') }}</th>
+                            <th class="text-center">{{ __('messages.renew_date') }}</th>
+                            <th class="text-center">{{ __('messages.return_date') }}</th>
+                            <th class="text-center">{{ __('messages.fineBook') }}</th>
+                            <th class="text-center">{{ __('messages.reason') }}</th>
+                            <th class="text-center">{{ __('messages.information') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +39,7 @@
                                 <td class="text-center">{{ $history->fine }}</td>
                                 <td class="text-center">{{ $history->fine_reason }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('loanBookHistories.show', $history->id) }}" class="btn btn-warning btn-sm">ព័ត៌មាន</a>
+                                    <a href="{{ route('loanBookHistories.show', $history->id) }}" class="btn btn-warning btn-sm">{{ __('messages.information') }}</a>
                                 </td>
                             </tr>
                         @endforeach

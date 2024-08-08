@@ -6,7 +6,8 @@
             <h2>{{ __('messages.all_book_loans') }}</h2>
         </div>
         <div class="col text-end">
-            <a href="{{ route('loans.create') }}" class="btn btn-success"> <i class="fa-solid fa-plus"></i> {{ __('messages.add')}}</a>
+            <a href="{{ route('loans.create') }}" class="btn btn-success"> <i class="fa-solid fa-plus"></i>
+                {{ __('messages.add') }}</a>
 
         </div>
     </div>
@@ -20,12 +21,12 @@
     <div class="card mb-4">
         <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div class="col-md-8">
-                <h5 class="card-title mb-0">{{ __('messages.book_list')}} </h5>
+                <h5 class="card-title mb-0">{{ __('messages.book_list') }} </h5>
             </div>
             <div class="col-md-4 text-end">
                 <form method="GET" action="{{ route('loans.index') }}" class="d-flex">
-                    <input type="text" name="search" class="form-control me-2" placeholder="ស្វែងរក..."
-                        value="{{ request()->get('search') }}">
+                    <input type="text" name="search" class="form-control me-2"
+                        placeholder="{{ __('messages.search_placeholder') }}" value="{{ request()->get('search') }}">
                     <button type="submit" class="btn btn-success"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
             </div>
@@ -152,52 +153,52 @@
                 });
             }
             const translations = {
-        name: "{{ __('messages.name') }}",
-        id: "{{ __('messages.id') }}",
-        gender: "{{ __('messages.gender') }}",
-        phone: "{{ __('messages.phone') }}",
-        year: "{{ __('messages.year') }}",
-        category: "{{ __('messages.category') }}",
-        invoice_number: "{{ __('messages.invoice_number') }}",
-        loan_date: "{{ __('messages.loan_date') }}",
-        due_date: "{{ __('messages.due_date') }}",
-        renew_date: "{{ __('messages.renew_date') }}",
-        status: "{{ __('messages.status') }}",
-        isbn: "{{ __('messages.isbn') }}",
-        book_title: "{{ __('messages.book_title') }}",
-        author: "{{ __('messages.author') }}",
-        subject: "{{ __('messages.subject') }}",
-        price: "{{ __('messages.price') }}",
-        n_a: "{{ __('messages.n/a') }}"
-    };
+                name: "{{ __('messages.name') }}",
+                id: "{{ __('messages.id') }}",
+                gender: "{{ __('messages.gender') }}",
+                phone: "{{ __('messages.phone') }}",
+                year: "{{ __('messages.year') }}",
+                category: "{{ __('messages.category') }}",
+                invoice_number: "{{ __('messages.invoice_number') }}",
+                loan_date: "{{ __('messages.loan_date') }}",
+                due_date: "{{ __('messages.due_date') }}",
+                renew_date: "{{ __('messages.renew_date') }}",
+                status: "{{ __('messages.status') }}",
+                isbn: "{{ __('messages.isbn') }}",
+                book_title: "{{ __('messages.book_title') }}",
+                author: "{{ __('messages.author') }}",
+                subject: "{{ __('messages.subject') }}",
+                price: "{{ __('messages.price') }}",
+                n_a: "{{ __('messages.n/a') }}"
+            };
 
-    document.querySelectorAll('.btn-view').forEach(button => {
-        button.addEventListener('click', function() {
-            const loanId = this.getAttribute('data-id');
+            document.querySelectorAll('.btn-view').forEach(button => {
+                button.addEventListener('click', function() {
+                    const loanId = this.getAttribute('data-id');
 
-            fetch(`/loans/${loanId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Determine badge class based on status
-                    let statusBadge;
-                    switch (data.status) {
-                        case 'available':
-                            statusBadge = '<span class="badge bg-success">Available</span>';
-                            break;
-                        case 'borrowed':
-                            statusBadge =
-                                '<span class="badge bg-warning text-dark">មិនទាន់សង</span>';
-                            break;
-                        case 'overdue':
-                            statusBadge = '<span class="badge bg-secondary">Overdue</span>';
-                            break;
-                        default:
-                            statusBadge = '<span class="badge bg-light">Unknown</span>';
-                    }
+                    fetch(`/loans/${loanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Determine badge class based on status
+                            let statusBadge;
+                            switch (data.status) {
+                                case 'available':
+                                    statusBadge = '<span class="badge bg-success">Available</span>';
+                                    break;
+                                case 'borrowed':
+                                    statusBadge =
+                                        '<span class="badge bg-warning text-dark">មិនទាន់សង</span>';
+                                    break;
+                                case 'overdue':
+                                    statusBadge = '<span class="badge bg-secondary">Overdue</span>';
+                                    break;
+                                default:
+                                    statusBadge = '<span class="badge bg-light">Unknown</span>';
+                            }
 
-                    const genderText = data.gender === 'male' ? 'ប្រុស' : 'ស្រី';
+                            const genderText = data.gender === 'male' ? 'ប្រុស' : 'ស្រី';
 
-                    document.getElementById('loanDetails').innerHTML = `
+                            document.getElementById('loanDetails').innerHTML = `
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
@@ -249,12 +250,12 @@
                         </div>
                     `;
 
-                    document.getElementById('editLoanButton').href = `/loans/${loanId}/edit`;
-                    new bootstrap.Modal(document.getElementById('loanModal')).show();
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    });
+                            document.getElementById('editLoanButton').href = `/loans/${loanId}/edit`;
+                            new bootstrap.Modal(document.getElementById('loanModal')).show();
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
             // Search functionality
             document.getElementById('searchInput').addEventListener('input', function() {
                 const query = this.value.toLowerCase();

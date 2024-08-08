@@ -19,20 +19,19 @@
                     @endif
                 </div>
                 <div class="col-md-4 mb-3">
-                    <p><strong>ឈ្មោះ:</strong> {{ $loanHistory->member->name }} <strong>|</strong>
+                    <p><strong>{{ __('messages.name') }}:</strong> {{ $loanHistory->member->name }} <strong>|</strong>
                         {{ $loanHistory->member->memberId }}</p>
-                    <p><strong>ភេទ:</strong> {{ $loanHistory->member->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}</p>
-                    <p><strong>ទូរស័ព្ទ:</strong> {{ $loanHistory->member->phone }}</p>
-                    <p><strong>ឆ្នាំ:</strong> {{ $loanHistory->member->study->name }}</p>
-                    <p><strong>ជំនាញ:</strong> {{ $loanHistory->member->category->name }}</p>
+                    <p><strong>{{ __('messages.gender') }}:</strong> {{ $loanHistory->member->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}</p>
+                    <p><strong>{{ __('messages.phone') }}:</strong> {{ $loanHistory->member->phone }}</p>
+                    <p><strong>{{ __('messages.year') }}:</strong> {{ $loanHistory->member->study->name }}</p>
+                    <p><strong>{{ __('messages.field') }}:</strong> {{ $loanHistory->member->category->name }}</p>
                 </div>
                 <div class="col-md-4 mb-3">
                     <p><strong>#{{ $loanHistory->invoice_number }}</strong></p>
-                    <p><strong>ថ្ងៃខ្ចី:</strong> {{ \Carbon\Carbon::parse($loanHistory->loan_date)->format('Y-m-d') }}</p>
-                    <p><strong>ថ្ងៃកំណត់សង:</strong> {{ \Carbon\Carbon::parse($loanHistory->due_date)->format('Y-m-d') }}</p>
-                    <p><strong>បានខ្ចីបន្ត:</strong> {{ $loanHistory->renew_date ? \Carbon\Carbon::parse($loanHistory->renew_date)->format('Y-m-d') : 'N/A' }}</p>
-                    <p><strong>ថ្ងៃសង:</strong> {{ $loanHistory->pay_date ? \Carbon\Carbon::parse($loanHistory->pay_date)->format('Y-m-d') : 'N/A' }}</p>                    
-                    {{-- <p><strong>ស្ថានភាព:</strong> --}}
+                    <p><strong>{{ __('messages.loan_date') }}:</strong>  {{ \Carbon\Carbon::parse($loanHistory->loan_date)->format('Y-m-d') }}</p>
+                    <p><strong>{{ __('messages.due_date') }}:</strong> {{ \Carbon\Carbon::parse($loanHistory->due_date)->format('Y-m-d') }}</p>
+                    <p><strong>{{ __('messages.renew_date') }}:</strong> {{ $loanHistory->renew_date ? \Carbon\Carbon::parse($loanHistory->renew_date)->format('Y-m-d') : 'N/A' }}</p>
+                    <p><strong>{{ __('messages.return_date') }}:</strong> {{ $loanHistory->pay_date ? \Carbon\Carbon::parse($loanHistory->pay_date)->format('Y-m-d') : 'N/A' }}</p>                    
                        
                     </p>
                 </div>
@@ -43,20 +42,16 @@
                 <table class="table table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">កូដ</th>
-                            <th scope="col">ចំណងជើង</th>
-                            <th scope="col">អ្នកនិពន្ធ</th>
-                            <th scope="col">ប្រភេទ</th>
-                            <th scope="col">ប្រាក់កក់</th>
-                            <th scope="col">ស្ថានភាព</th>
+                            <th scope="col">{{ __('messages.code') }}</th>
+                            <th scope="col">{{ __('messages.title') }}</th>
+                            <th scope="col">{{ __('messages.author') }}</th>
+                            <th scope="col">{{ __('messages.subject_name') }}</th>
+                            <th scope="col">{{ __('messages.price') }}</th>
+                            <th scope="col">{{ __('messages.status') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            {{-- <td>{{ $loanHistory->book->isbn }}</td>
-                            <td>{{ $loanHistory->book->title }}</td>
-                            <td>{{ $loanHistory->book->author->name }}</td>
-                            <td>{{ $loanHistory->price ?? 'N/A' }} ៛</td> --}}
                             <td>{{ $loanHistory->book ? $loanHistory->book->isbn : 'N/A' }}</td>
                             <td>{{ $loanHistory->book ? $loanHistory->book->title : 'N/A' }}</td>
                             <td>{{ $loanHistory->book && $loanHistory->book->author->name ? $loanHistory->book->author->name : 'N/A' }}
@@ -65,26 +60,26 @@
                             <td>{{ $loanHistory->price ?? 'N/A' }} ៛</td>
                             <td>
                                 @if ($loanHistory->status === 'returned')
-                                <span class="badge badge-success">បានសង</span>
+                                <span class="badge badge-success">{{ __('messages.returned') }}</span>
                             @elseif ($loanHistory->status === 'borrowed')
-                                <span class="badge badge-warning">Not Returned</span>
+                                <span class="badge badge-warning">{{ __('messages.not_returned') }}</span>
                             @elseif ($loanHistory->status === 'reserved')
-                                <span class="badge badge-secondary">Reserved</span>
+                                <span class="badge badge-secondary">{{ __('messages.reserved') }}</span>
                             @else
-                                <span class="badge badge-dark">Unknown</span>
+                                <span class="badge badge-dark">{{ __('messages.unknown') }}</span>
                             @endif
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <p><strong>ផាកពិន័យ:</strong> {{ $loanHistory->fine ?? 'N/A' }} <strong>មូលហេតុ:</strong>
+            <p><strong>{{ __('messages.fineBook') }}:</strong> {{ $loanHistory->fine ?? 'N/A' }} <strong>{{ __('messages.fine_reason') }}:</strong>
                 {{ $loanHistory->fine_reason ?? 'N/A' }}</p>
         </div>
 
         <div class="modal-footer">
-            <a href="{{ route('loanBookHistories.index') }}" class="btn btn-outline-success btn-sm">ត្រឡប់ក្រោយ</a>
-            <button onclick="printLoanDetails()" class="btn btn-secondary btn-sm"><i class="fa-solid fa-print"></i></button>
+            <a href="{{ route('loanBookHistories.index') }}" class="btn btn-outline-success btn-sm">{{ __('messages.back') }}</a>
+            <button onclick="printLoanDetails()" class="btn btn-secondary btn-sm"><i class="fa-solid fa-print"></i> {{ __('messages.print') }}</button>
         </div>
     </div>
 
