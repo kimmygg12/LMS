@@ -4,13 +4,39 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use App\Models\Book;
-use App\Models\LoanBook;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Auth;
 class BookController extends Controller
 {
+    public function homeStudent(Request $request)
+    {
+        $search = $request->input('search');
+        $query = Book::query();
+
+        if ($search) {
+            $query->where('title', 'like', "%{$search}%")
+                ->orWhere('isbn', 'like', "%{$search}%")
+                ->orWhereHas('author', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        }
+
+        $books = $query->paginate(5);
+
+        return view('home_student', compact('books'));
+    }
+    public function showBook(Book $book)
+    {
+        return view('members.student-book', compact('book'));
+    }
+
+    public function searchBooks(Request $request)
+    {
+        $search = $request->input('search');
+        return redirect()->route('home.student', ['search' => $search]);
+    }
     public function search(Request $request)
     {
         $query = $request->input('query');
@@ -33,20 +59,29 @@ class BookController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
         }
-        $books = $query->with('author', 'subject')->paginate(3);
+
+        // Fetch books ordered by created_at in descending order
+        $books = $query->with('author', 'subject')
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
+
+        // Get the most recently created book
         $newBooks = Book::orderBy('created_at', 'desc')->limit(1)->get();
-        return view('books.index', compact('books', 'newBooks', 'search'))->with('i', (request()->input('page', 1) - 1) * 5);
+
+        return view('books.index', compact('books', 'newBooks', 'search'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
     }
+
 
     public function create()
     {
         $authors = Author::all(); // Fetch all authors
         $subjects = Subject::all(); // Fetch all subjects
-    
+
         return view('books.create', compact('authors', 'subjects'));
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -99,6 +134,7 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
+
         return view('books.show', compact('book'));
     }
 
@@ -109,7 +145,7 @@ class BookController extends Controller
         $subjects = Subject::all();
         return view('books.edit', compact('book', 'authors', 'subjects'));
     }
-    
+
 
     public function update(Request $request, $id)
     {
@@ -132,8 +168,8 @@ class BookController extends Controller
         $book->publication_date = $request->publication_date;
         $book->description = $request->description;
         $book->status = $request->status;
-            $book->subject_id = $request->subject_id;
-            $book->quantity = $request->quantity; // Update quantity
+        $book->subject_id = $request->subject_id;
+        $book->quantity = $request->quantity; // Update quantity
 
 
         if ($request->hasFile('cover_image')) {
@@ -157,14 +193,17 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
+        // Check if the user is an admin
+        if (Auth::check() && Auth::user()->usertype === 'admin') {
+            if ($book->cover_image) {
+                Storage::disk('public')->delete($book->cover_image);
+            }
 
+            $book->delete();
 
-        if ($book->cover_image) {
-            Storage::disk('public')->delete($book->cover_image);
+            return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+        } else {
+            return redirect()->route('books.index')->with('error', 'You do not have permission to delete this book.');
         }
-
-        $book->delete();
-
-        return redirect()->back();
     }
 }

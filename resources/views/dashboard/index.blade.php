@@ -217,14 +217,16 @@
                         @endphp
 
                         @if ($showLoan)
+                        @if ($loan->status !== 'reserved' && $loan->status !== 'rejected')
                             <tr>
+                        
                                 <td>{{ $loan->invoice_number }}</td>
                                 <td>{{ $loan->book->title }}</td>
                                 <td>{{ $loan->member->name }}</td>
-                                <td>{{ $loan->loan_date->format('d-m-Y') }}</td>
-                                <td>{{ $loan->due_date->format('d-m-Y') }}</td>
+                                <td>{{ $loan->loan_date ? $loan->loan_date->format('d-m-Y') : 'N/A' }}</td>
+                                <td>{{ $loan->due_date ? $loan->due_date->format('d-m-Y') : 'N/A' }}</td>
                                 <td>{{ $loan->renew_date ? $loan->renew_date->format('d-m-Y') : 'N/A' }}</td>
-                                <td>{{ $loan->price }}</td>
+                                <td>{{ $loan->price }}</td>                                
 
                                 <td>
                                     @if ($loan->status === 'available')
@@ -239,8 +241,10 @@
                                     <a href="{{ route('loans.finebook', $loan->id) }}" class="btn btn-warning btn-sm">
                                         <i class="fa-solid fa-money-bill"></i>
                                     </a>
+                                 
                                 </td>
                             </tr>
+                            @endif
                         @endif
                     @endforeach
                 </tbody>

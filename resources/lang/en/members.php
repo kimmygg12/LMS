@@ -28,5 +28,4 @@ return [
     'create_loan_info' => 'Loan Information',
     'Student_list' => 'Student list',
     'Create_list' => 'Create',
-
 ];

@@ -1,15 +1,17 @@
 <?php
 
+
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Member extends Model
+class Member extends Authenticatable
 {
     use HasFactory;
     protected $table = 'members'; 
-    protected $fillable = ['name', 'name_latin', 'gender', 'phone', 'image', 'study_id', 'category_id', 'memberId'];
+    protected $fillable = ['name', 'name_latin', 'gender', 'phone', 'image', 'study_id', 'category_id', 'memberId','password'];
+    protected $hidden = ['password', 'remember_token'];
     public function loans()
     {
         return $this->hasMany(LoanBook::class);
@@ -27,5 +29,9 @@ class Member extends Model
     {
         return $this->belongsTo(Category::class);
     }
-   
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
+    
 }

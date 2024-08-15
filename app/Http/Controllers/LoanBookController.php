@@ -9,29 +9,28 @@ use App\Models\Member;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class LoanBookController extends Controller
 {
     public function index(Request $request)
     {
-        $loans = LoanBook::with('book', 'member')->paginate(4);
+        $query = LoanBook::with('book', 'member');
         $members = Member::all();
         $search = $request->input('search');
 
-        $loans = LoanBook::query()
-            ->with('book', 'member') // Eager load relationships
-            ->when($search, function ($query, $search) {
-                $query->where('invoice_number', 'like', "%{$search}%")
-                    ->orWhereHas('book', function ($q) use ($search) {
-                        $q->where('title', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('member', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->paginate(4);
-
-        return view('loans.index', compact('loans'));
+        if ($search) {
+            $query->where('invoice_number', 'like', "%{$search}%")
+                ->orWhereHas('book', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
+                })
+                ->orWhereHas('member', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        }
+        $loans = $query->orderBy('created_at', 'desc')->paginate(4);
+        $newLoan = LoanBook::orderBy('created_at', 'desc')->first();
+        return view('loans.index', compact('loans', 'newLoan', 'search'));
     }
     public function return()
     {
@@ -72,48 +71,41 @@ class LoanBookController extends Controller
             'subject' => $loan->book->subject->name,
         ]);
     }
-
     public function store(Request $request)
     {
-        // Validate the request data
         $request->validate([
-            'isbn' => 'required|exists:books,isbn',
-            'member_id' => 'required|exists:members,id',
-            'price' => 'required|numeric',
-            'loan_date' => 'required|date',
-            'due_date' => 'required|date|after_or_equal:loan_date',
+            'books' => 'required|array',
+            'books.*.book_id' => 'required|exists:books,id',
+            'books.*.member_id' => 'required|exists:members,id',
+            'books.*.price' => 'required|numeric',
+            'books.*.loan_date' => 'required|date',
+            'books.*.due_date' => 'required|date|after_or_equal:books.*.loan_date',
         ]);
 
-        $book = Book::where('isbn', $request->isbn)->first();
+        foreach ($request->books as $bookData) {
+            $book = Book::find($bookData['book_id']);
 
-        if (!$book) {
-            return redirect()->back()->with('error', 'Book not found.');
+            if (!$book || $book->quantity < 1) {
+                return redirect()->back()->with('error', 'The book is not available.');
+            }
+
+            $invoice_number = $this->generateInvoiceNumber();
+
+            LoanBook::create([
+                'book_id' => $book->id,
+                'member_id' => $bookData['member_id'],
+                'price' => $bookData['price'],
+                'loan_date' => $bookData['loan_date'],
+                'due_date' => $bookData['due_date'],
+                'invoice_number' => $invoice_number,
+            ]);
+
+            $book->decrement('quantity');
+            $book->update(['status' => $book->quantity > 0 ? 'available' : 'borrowed']);
         }
-        if ($book->quantity < 1) {
-            return redirect()->back()->with('error', 'No copies of this book are available.');
-        }
 
-        $invoice_number = $this->generateInvoiceNumber();
-
-        $loan = LoanBook::create([
-            'book_id' => $book->id,
-            'member_id' => $request->member_id,
-            'price' => $request->price,
-            'loan_date' => $request->loan_date,
-            'due_date' => $request->due_date,
-            'invoice_number' => $invoice_number,
-        ]);
-        $book->quantity -= 1;
-
-        if ($book->quantity > 0) {
-            $book->status = 'available'; // Status is 'borrowed' if there are still copies left
-        } else {
-            $book->status = 'borrowed'; // Status is 'unavailable' if no copies are left
-        }
-        $book->save();
         return redirect()->route('loans.index');
     }
-
     public function edit($id)
     {
         $loan = LoanBook::findOrFail($id);
@@ -144,11 +136,8 @@ class LoanBookController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        // Fetch the new and previous book records
-        // $newBook = Book::find($request->book_id);
         $previousBook = Book::find($previousBookId);
 
-        // Update the status of the previous book
         if ($previousBook) {
             // $previousBook->quantity += 1;
             $previousBook->status = $previousBook->quantity > 0 ? 'available' : 'borrowed';
@@ -172,32 +161,37 @@ class LoanBookController extends Controller
     public function destroy($id)
     {
         $loan = LoanBook::findOrFail($id);
-
-        // Find the book associated with the loan
         $book = Book::find($loan->book_id);
 
-        if ($book) {
-            // Increment the quantity of the book
-            $book->quantity += 1;
+        // Check if the user is an admin
+        if (Auth::check() && Auth::user()->usertype === 'admin') {
+            if ($book) {
+                // If the loan was borrowed, increase the book quantity by 1
+                if ($loan->status === 'borrowed') {
+                    $book->quantity += 1;
+                }
 
-            // Update the book status
-            if ($book->quantity > 0) {
-                $book->status = 'available'; // Status is 'available' if there are copies left
-            } else {
-                $book->status = 'borrowed'; // Status is 'unavailable' if no copies are left
+                // Update the book status based on the new quantity
+                if ($book->quantity > 0) {
+                    $book->status = 'available';
+                } else {
+                    $book->status = 'borrowed';
+                }
+                $book->save();
             }
-            // Save the updated book details
-            $book->save();
+
+            // Delete the loan record regardless of its status
+            $loan->delete();
+
+            return redirect()->route('loans.index');
+        } else {
+            return redirect()->route('loans.index');
         }
-        // Delete the loan record
-        $loan->delete();
-        // Redirect to the loans index with a success message
-        return redirect()->route('loans.index');
     }
+
 
     public function showFinebookForm($id)
     {
-        
         $loan = LoanBook::findOrFail($id);
         return view('loans.finebook', compact('loan'));
     }
@@ -220,7 +214,6 @@ class LoanBookController extends Controller
         $loanData = $request->only(['due_date', 'renew_date', 'pay_date', 'fine', 'fine_reason']);
         $loan->update($loanData);
 
-        $invoiceNumber = $this->generateInvoiceNumber(); // Ensure a unique invoice number
 
         if ($request->filled('renew_date') && $request->filled('pay_date')) {
             LoanBookHistory::create([
@@ -231,7 +224,7 @@ class LoanBookController extends Controller
                 'loan_date' => $loan->loan_date,
                 'due_date' => $loan->due_date,
                 'pay_date' => $loan->pay_date,
-                'invoice_number' => $invoiceNumber,
+                'invoice_number' => $loan->invoice_number,
                 'renew_date' => $loan->renew_date,
                 'fine' => $loan->fine,
                 'fine_reason' => $loan->fine_reason,
@@ -247,7 +240,7 @@ class LoanBookController extends Controller
                 $book->save();
             }
 
-            return redirect()->route('loans.index');
+            return redirect()->route('loanBookHistories.index');
         } elseif ($request->filled('renew_date')) {
             return redirect()->route('loans.index');
         } elseif ($request->filled('pay_date')) {
@@ -259,7 +252,7 @@ class LoanBookController extends Controller
                 'loan_date' => $loan->loan_date,
                 'due_date' => $loan->due_date,
                 'pay_date' => $loan->pay_date,
-                'invoice_number' => $invoiceNumber,
+                'invoice_number' => $loan->invoice_number,
                 'renew_date' => $loan->renew_date,
                 'fine' => $loan->fine,
                 'fine_reason' => $loan->fine_reason,
@@ -274,7 +267,7 @@ class LoanBookController extends Controller
                 $book->save();
             }
 
-            return redirect()->route('loans.index');
+            return redirect()->route('loanBookHistories.index');
         }
 
         if (!$request->filled('renew_date') && !$request->filled('pay_date')) {
@@ -307,77 +300,32 @@ class LoanBookController extends Controller
         return ['start' => $start, 'end' => $end];
     }
 
-    // public function overdueBooksReport(Request $request)
-    // {
-    //     $loans =LoanBook::all();
-    //     $currentDate = Carbon::now()->toDateString();
-    
-    //     // Retrieve overdue books
-    //     $overdueBooks = LoanBook::where(function ($query) use ($currentDate) {
-    //         $query->where(function ($query) use ($currentDate) {
-    //                 // Books with due_date before current date and no renewal
-    //                 $query->where('due_date', '<', $currentDate)
-    //                       ->whereNull('renew_date');
-    //             })
-    //             ->orWhere(function ($query) use ($currentDate) {
-    //                 // Books with a renewal date before current date
-    //                 $query->whereNotNull('renew_date')
-    //                       ->where('renew_date', '<', $currentDate);
-    //             });
-    //     })
-    //     ->where('status', 'borrowed')
-    //     ->get();
-    
-    //     // Calculate overdue fines
-    //     $overdueDetails = $overdueBooks->map(function ($loan) use ($currentDate) {
-    //         // Determine the actual due date considering renewals
-    //         $actualDueDate = isset($loan->renew_date) ? $loan->renew_date : $loan->due_date;
-    //         $daysOverdue = Carbon::parse($actualDueDate)->diffInDays(Carbon::now());
-    //         $fine = $daysOverdue * 500; // Example fine rate: $5 per overdue day
-    
-    //         return [
-    //             'member' => $loan->member,
-    //             'book' => $loan->book,
-    //             'loan_date' => $loan->loan_date,
-    //             'due_date' => $loan->due_date,
-    //             'renew_date' => $loan->renew_date,
-    //             'days_overdue' => $daysOverdue,
-    //             'invoice_number' => $loan->invoice_number ,
-    //             'fine' => $fine,
-    //             'id' => $loan->id, // Add this line to include the loan
-    //         ];
-    //     });
-    //     $totalOverdueBooks = $overdueBooks->count();
-    //     return view('loans.overdueBooksReport', compact('overdueDetails','loans','totalOverdueBooks'));
-    // }
     public function overdueBooksReport(Request $request)
     {
         // Get current date
         $currentDate = Carbon::now()->toDateString();
-        
+
         // Retrieve overdue books
         $overdueBooks = LoanBook::where('status', 'borrowed')
             ->where(function ($query) use ($currentDate) {
                 $query->where(function ($query) use ($currentDate) {
                     // Books with due_date before current date and no renewal
                     $query->where('due_date', '<', $currentDate)
-                          ->whereNull('renew_date');
+                        ->whereNull('renew_date');
                 })
-                ->orWhere(function ($query) use ($currentDate) {
-                    // Books with a renewal date before current date
-                    $query->whereNotNull('renew_date')
-                          ->where('renew_date', '<', $currentDate);
-                });
+                    ->orWhere(function ($query) use ($currentDate) {
+                        // Books with a renewal date before current date
+                        $query->whereNotNull('renew_date')
+                            ->where('renew_date', '<', $currentDate);
+                    });
             })
             ->get();
-    
-        // Calculate overdue fines
+
         $overdueDetails = $overdueBooks->map(function ($loan) use ($currentDate) {
-            // Determine the actual due date considering renewals
             $actualDueDate = $loan->renew_date ?? $loan->due_date;
             $daysOverdue = Carbon::parse($actualDueDate)->diffInDays(Carbon::now());
             $fine = $daysOverdue * 500; // Example fine rate: $500 per overdue day
-    
+
             return [
                 'member' => $loan->member,
                 'book' => $loan->book,
@@ -390,12 +338,11 @@ class LoanBookController extends Controller
                 'id' => $loan->id,
             ];
         });
-    
+
         $totalOverdueBooks = $overdueBooks->count();
-    
+
         return view('loans.overdueBooksReport', compact('overdueDetails', 'totalOverdueBooks'));
     }
-
     public function indexReport(Request $request)
     {
         // Validation of the date inputs
@@ -407,7 +354,6 @@ class LoanBookController extends Controller
         $startDate = Carbon::parse($request->input('start_date'));
         $endDate = Carbon::parse($request->input('end_date'));
 
-        // Fetching reports based on the request parameters
         $borrowedReports = LoanBook::whereBetween('loan_date', [$startDate, $endDate])
             ->whereNull('pay_date')
             ->get();
@@ -431,5 +377,217 @@ class LoanBookController extends Controller
         return view('loans.report_total', compact('totalLoans'));
     }
 
-   
+    public function memberLoanDetails($id)
+    {
+        $member = Member::findOrFail($id);
+
+        $today = Carbon::today()->toDateString();
+        $loans = LoanBook::where('member_id', $id)
+            ->whereDate('loan_date', $today)
+            ->with('book')
+            ->get();
+
+        // Count the number of loans
+        $loanCount = $loans->count();
+
+        return view('loans.member-loan-details', compact('member', 'loans', 'loanCount'));
+    }
+    // public function showInvoice($id)
+    // {
+
+    //     $loan = LoanBook::with('member', 'book')->findOrFail($id);
+    //     return view('loans.show-invoice', compact('loan'));
+    // }
+    public function showInvoice($id)
+    {
+        // Fetch the loan details along with related member and book
+        $loan = LoanBook::with('member', 'book')->findOrFail($id);
+
+        // Get the search date and time from the request, if available
+        $searchDate = request('date');
+        $searchTime = request('time');
+        $query = LoanBook::with('book')
+            ->where('member_id', $loan->member_id)
+            ->where('id', '!=', $id); // Exclude the current loan to avoid duplication
+        if ($searchDate) {
+            $query->whereDate('loan_date', $searchDate);
+        }
+        if ($searchTime) {
+            $query->whereTime('loan_date', $searchTime);
+        }
+        $memberLoans = $query->get();
+        return view('loans.show-invoice', compact('loan', 'memberLoans', 'searchDate', 'searchTime'));
+    }
+
+    public function showReservedBooks()
+    {
+        $member = Auth::guard('member')->user();
+        $reservedBooks = LoanBook::where('member_id', $member->id)
+            ->where('status', 'reserved')
+            ->get();
+
+        $totalReserved = $reservedBooks->count();
+
+        return view('reservations.show_reserved', compact('reservedBooks', 'totalReserved'));
+    }
+
+    public function reserve(Request $request)
+    {
+        $request->validate([
+            'book_id' => 'required|exists:books,id',
+            'member_id' => 'required|exists:members,id',
+            'reservation_date' => 'required|date',
+        ]);
+
+        $book = Book::find($request->book_id);
+
+        if (!$book || $book->quantity < 1) {
+            return redirect()->back()->with('error', 'The book is not available for reservation.');
+        }
+
+        $reservationNumber = $this->generateInvoiceNumber();
+
+        LoanBook::create([
+            'book_id' => $book->id,
+            'member_id' => $request->member_id,
+            'reservation_date' => $request->reservation_date,
+            'invoice_number' => $reservationNumber,
+            'status' => 'reserved',
+        ]);
+
+        return redirect()->route('reservations.index')->with('success', 'Book reserved successfully.');
+    }
+
+    // Generate a unique invoice number
+
+    public function approveReservation($id)
+    {
+        $reservation = LoanBook::findOrFail($id);
+
+        if ($reservation->status !== 'reserved') {
+            return redirect()->back()->with('error', 'Reservation not found or already processed.');
+        }
+
+        $book = Book::find($reservation->book_id);
+
+        if (!$book || $book->quantity < 1) {
+            return redirect()->back()->with('error', 'The book is not available for approval.');
+        }
+
+        $loan = LoanBook::create([
+            'book_id' => $reservation->book_id,
+            'member_id' => $reservation->member_id,
+            'price' => $reservation->price,
+            'loan_date' => Carbon::now()->toDateString(),
+            'due_date' => Carbon::now()->addDays(14)->toDateString(), // Example: 2 weeks loan
+            'invoice_number' => $reservation->invoice_number,
+        ]);
+
+        $book->decrement('quantity');
+        $book->update(['status' => $book->quantity > 0 ? 'available' : 'borrowed']);
+
+        $reservation->update(['status' => 'approved']);
+
+        return redirect()->route('loans.index');
+    }
+    public function showApproveForm(LoanBook $loan)
+    {
+
+        // Ensure the loan is in 'reserved' status
+        if ($loan->status !== 'reserved') {
+            return redirect()->route('loans.index')->with('error', 'Loan is not in reserved status.');
+        }
+
+        // Return the view with the loan details
+        return view('loans.approve', compact('loan'));
+    }
+
+    public function approve(Request $request, LoanBook $loan)
+    {
+        // Uncomment this block if you want to ensure the user is an admin
+        // if (Auth::user()->usertype !== 'admin') {
+        //     return redirect()->route('loans.index')->with('error', 'Unauthorized action.');
+        // }
+        
+        // Ensure the loan is in 'reserved' status
+        if ($loan->status !== 'reserved') {
+            return redirect()->route('loans.index')->with('error', 'Loan is not in reserved status.');
+        }
+        
+        // Validate the price input
+        $request->validate([
+            'price' => 'required|numeric|min:0',
+        ]);
+        
+        // Fetch the book associated with the loan
+        $book = Book::find($loan->book_id);
+        
+        if (!$book) {
+            return redirect()->route('loans.index')->with('error', 'Book not found.');
+        }
+        
+        // Ensure there is enough quantity for the loan
+        if ($book->quantity < 1) {
+            return redirect()->route('loans.index')->with('error', 'Not enough quantity available for the loan.');
+        }
+        
+        // Approve the loan
+        $loan->status = 'borrowed'; // Or 'approved' if that's the intended status
+        $loan->loan_date = Carbon::now()->toDateString();
+        $loan->due_date = Carbon::now()->addDays(14)->toDateString(); // Example: 2 weeks loan
+        $loan->price = $request->input('price'); // Set the price from the input
+        $loan->save();
+        
+        // Decrease the book's quantity
+        $book->decrement('quantity');
+    
+        // Update the book's status based on the quantity
+        $book->update(['status' => $book->quantity > 0 ? 'available' : 'borrowed']);
+        
+        return redirect()->route('loans.index')->with('success', 'Loan approved successfully.');
+    }
+    
+    public function rejectReservation($id)
+    {
+        $reservation = LoanBook::findOrFail($id);
+
+        if ($reservation->status !== 'reserved') {
+            return redirect()->back()->with('error', 'Reservation not found or already processed.');
+        }
+
+        $reservation->update(['status' => 'rejected']);
+
+        // Optionally, you can also revert any changes to the book's quantity or status if needed.
+        // For example, if the book's quantity was reduced when the reservation was made:
+        // $book = Book::find($reservation->book_id);
+        // $book->increment('quantity');
+        // $book->update(['status' => 'available']);
+
+        return redirect()->route('loans.index');
+    }
+    public function reApproveReservation($id)
+{
+    $reservation = LoanBook::findOrFail($id);
+
+    if ($reservation->status !== 'rejected') {
+        return redirect()->back()->with('error', 'Reservation not found or not rejected.');
+    }
+
+    // Optionally, update the book status and quantity if needed
+    $book = Book::find($reservation->book_id);
+
+    if (!$book || $book->quantity < 1) {
+        return redirect()->back()->with('error', 'The book is not available for re-approval.');
+    }
+
+    // Update the reservation status to 'reserved'
+    $reservation->update(['status' => 'reserved']);
+
+    // Optionally, update the book status and quantity if needed
+    $book->update(['status' => 'available']);
+
+    return redirect()->route('loans.index');
+}
+
+
 }

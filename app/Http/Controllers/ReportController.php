@@ -126,4 +126,21 @@ class ReportController extends Controller
         );
     }
 
+  
+    
+    public function newBooks(Request $request)
+    {
+        // Default to the current month if no dates are provided
+        $startDate = Carbon::parse($request->input('start_date', Carbon::now()->startOfMonth()));
+        $endDate = Carbon::parse($request->input('end_date', Carbon::now()->endOfMonth()));
+    
+        // Fetch and sort books added within the specified date range
+        $newBooks = Book::whereBetween('created_at', [$startDate, $endDate])
+                        ->orderBy('created_at', 'desc') // Order by newest first
+                        ->get();
+    
+        return view('reports.new_books', compact('newBooks', 'startDate', 'endDate'));
+    }
+    
+    
 }

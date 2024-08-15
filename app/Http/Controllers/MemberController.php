@@ -2,14 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\Category;
+use App\Models\LoanBook;
 use App\Models\Member;
 use App\Models\Study;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Auth;
 class MemberController extends Controller
 {
+    public function dashboard(Request $request)
+{
+    // Get the search query from the request
+    $search = $request->input('search');
+    
+    // Define the number of books to display per page
+    $perPage = 5;
+
+    // If there is a search query, filter the books based on title, ISBN, or author's name
+    if ($search) {
+        $books = Book::where('title', 'LIKE', "%{$search}%")
+                     ->orWhere('isbn', 'LIKE', "%{$search}%")
+                     ->orWhereHas('author', function($query) use ($search) {
+                         $query->where('name', 'LIKE', "%{$search}%");
+                     })
+                     ->paginate($perPage);
+    } else {
+        // If there's no search query, retrieve all books with pagination
+        $books = Book::paginate($perPage);
+    }
+
+    // Return the view with paginated books
+    return view('members.dashboard', compact('books'));
+}
+
+
+    // Method to show the details of a specific book
+    public function showBook($id)
+    {
+        $book = Book::with('author')->findOrFail($id);
+        return view('members.details', compact('book'));
+    }
+    public function showReservedBooks($id)
+    {
+        // Ensure that only authenticated members can view their own reserved books
+        if (Auth::guard('member')->check() && Auth::guard('member')->id() == $id) {
+            $member = Member::findOrFail($id);
+            $reservedBooks = LoanBook::where('member_id', $id)
+                ->where('status', 'reserved') // Assuming 'reserved' is the status for reserved books
+                ->with('book')
+                ->get();
+
+            return view('members.reserved_books', compact('member', 'reservedBooks'));
+        }
+
+        return redirect()->route('members.login');
+    }
     public function index(Request $request)
     {
         $query = Member::with(['study', 'category']);
@@ -19,11 +68,19 @@ class MemberController extends Controller
             $query->where('name', 'like', "%{$search}%")
                 ->orWhere('memberId', 'like', "%{$search}%")
                 ->orWhere('name_latin', 'like', "%{$search}%")
-                ->orWhere('category_id', 'like', "%{$search}%");
+                ->orWhereHas('category', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
         }
-        $members = $query->paginate(5);
-        return view('members.index', compact('members'))->with('i', (request()->input('page', 1) - 1) * 5);
+
+        $members = $query->orderBy('created_at', 'desc')->paginate(5);
+
+        // Get the most recently created member
+        $newMembers = Member::orderBy('created_at', 'desc')->limit(1)->get();
+
+        return view('members.index', compact('members', 'newMembers'));
     }
+
 
     public function create()
     {
@@ -77,6 +134,28 @@ class MemberController extends Controller
             'image' => $member->image ? asset($member->image) : null,
         ]);
     }
+    public function showmember($id)
+    {
+        // Ensure that only authenticated members can view their own details
+        if (Auth::guard('member')->check()) {
+            $member = Member::findOrFail($id);
+            return view('members.show', compact('member'));
+        }
+
+        return redirect()->route('members.login');
+    }
+    public function showLoans($id)
+    {
+        // Ensure that only authenticated members can view their own loans
+        if (Auth::guard('member')->check() && Auth::guard('member')->id() == $id) {
+            $member = Member::findOrFail($id);
+            $loans = LoanBook::where('member_id', $id)->with('book')->get();
+
+            return view('members.loans', compact('member', 'loans'));
+        }
+
+        return redirect()->route('members.login');
+    }
     public function edit($id)
     {
         $member = Member::findOrFail($id);
@@ -126,15 +205,21 @@ class MemberController extends Controller
     //     // return redirect()->back();
     // }
     public function destroy($id)
-{
-    $member = Member::findOrFail($id);
-    if ($member->image && Storage::exists($member->image)) {
-        Storage::delete($member->image);
-    }
-    $member->delete();
-    return redirect()->route('members.index');
-}
+    {
+        $member = Member::findOrFail($id);
 
+        // Check if the user is an admin
+        if (Auth::check() && Auth::user()->usertype === 'admin') {
+            if ($member->image && Storage::exists($member->image)) {
+                Storage::delete($member->image);
+            }
+            $member->delete();
+
+            return redirect()->route('members.index');
+        } else {
+            return redirect()->route('members.index')->with('error', 'You do not have permission to delete this member.');
+        }
+    }
 
     private function generateMemberId()
     {

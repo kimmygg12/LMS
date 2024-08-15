@@ -30,14 +30,15 @@
                         <td>
                             <!-- Action Buttons -->
                             {{-- <a href="{{ route('categories.show', $category->id) }}" class="btn btn-info btn-sm">View</a> --}}
-                            <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                            <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-success btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
                             
-                            <!-- Delete Form -->
+                            @if (Auth::check() && Auth::user()->usertype === 'admin')
                             <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline delete-form">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

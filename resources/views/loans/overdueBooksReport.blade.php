@@ -164,7 +164,7 @@
                             @forelse ($overdueDetails as $detail)
                                 <tr>
                                     <td class="text-center">{{ $detail['invoice_number'] }}</td>
-                                    <td class="text-center">{{ $detail['book']->isbn }}</td>
+                                    <td class="text-center">{{ $detail['book']->isbn ?? 'Unknown'}}</td>
                                     <td class="text-center">{{ $detail['book']->title ?? 'Unknown' }}</td>
                                     <td class="text-center">{{ $detail['member']->name ?? 'Unknown' }}</td>
                                     <td class="text-center">{{ \Carbon\Carbon::parse($detail['loan_date'])->format('Y-m-d') }}</td>

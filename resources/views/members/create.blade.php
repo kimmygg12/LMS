@@ -87,4 +87,17 @@
             </div>
         </div>
     </div>
+    @if (session('success'))
+        <script>
+            $(document).ready(function() {
+                toastr.success('{{ session('success') }}', 'Success');
+            });
+        </script>
+    @elseif (session('error'))
+        <script>
+            $(document).ready(function() {
+                toastr.error('{{ session('error') }}', 'Error');
+            });
+        </script>
+    @endif
 @endsection

@@ -37,21 +37,30 @@ class AuthorController extends Controller
         return view('authors.show', compact('author'));
     }
 
-    public function edit(Author $author)
-    {
-        return view('authors.edit', compact('author'));
-    }
+// app/Http/Controllers/AuthorController.php
 
-    public function update(Request $request, Author $author)
-    {
-        $request->validate(['name' => 'required']);
-        $author->update($request->all());
-        return redirect()->route('authors.index')->with('success', 'Author updated successfully.');
-    }
+public function edit($id)
+{
+    $author = Author::findOrFail($id);
+    return response()->json($author);
+}
 
-    public function destroy(Author $author)
-    {
-        $author->delete();
-        return redirect()->route('authors.index')->with('success', 'Author deleted successfully.');
-    }
+public function update(Request $request, $id)
+{
+    $request->validate(['name' => 'required']);
+
+    $author = Author::findOrFail($id);
+    $author->update($request->all());
+
+    return response()->json($author);
+}
+
+public function destroy($id)
+{
+    $author = Author::findOrFail($id);
+    $author->delete();
+
+    return response()->json(['success' => true]);
+}
+
 }

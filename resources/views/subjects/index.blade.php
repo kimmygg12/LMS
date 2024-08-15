@@ -27,12 +27,14 @@
                             <td>{{ $subject->id }}</td>
                             <td>{{ $subject->name }}</td>
                             <td>
-                                <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-success btn-sm"> <i class="fa-solid fa-pen-to-square"></i></a>
+                                @if (Auth::check() && Auth::user()->usertype === 'admin')
                                 <form action="{{ route('subjects.destroy', $subject->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

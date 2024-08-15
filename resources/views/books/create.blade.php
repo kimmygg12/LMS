@@ -3,7 +3,7 @@
 @section('content')
     <div class="card mt-3">
         <div class="card-header">
-            <h2>{{ __('books.book_list') }}</h2>
+            <h2>{{ __('books.add_book') }}</h2>
         </div>
         <div class="card-body">
             @if (session('error'))

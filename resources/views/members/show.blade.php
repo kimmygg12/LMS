@@ -1,9 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.member')
 
 @section('content')
 <div class="container">
     <h1>Student Details</h1>
-
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -17,15 +16,16 @@
                 </div>
                 <div class="col-md-8">
                     <!-- Student Details -->
-                    <h5 class="card-title">{{ $member->name }}</h5>
+                    <p class="card-title">{{ $member->memberId }}</p>
+                    <p><strong>Name:</strong> {{ $member->name }}</p>
                     <p><strong>Name Latin:</strong> {{ $member->name_latin }}</p>
                     <p><strong>Gender:</strong> {{ $member->gender }}</p>
                     <p><strong>Phone:</strong> {{ $member->phone }}</p>
-                    <p><strong>Study:</strong> {{ $member->study->name }}</p>
-                    <p><strong>Category:</strong> {{ $member->category->name }}</p>
+                    <p><strong>Year:</strong> {{ $member->study->name }}</p>
+                    <p><strong>Skills:</strong> {{ $member->category->name }}</p>
                 </div>
             </div>
-            <a href="{{ route('members.index') }}" class="btn btn-secondary mt-3">Back to List</a>
+            <a href="{{ route('members.dashboard') }}" class="btn btn-secondary mt-3">Back</a>
         </div>
     </div>
 </div>

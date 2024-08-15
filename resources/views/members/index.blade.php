@@ -21,7 +21,7 @@
     <div class="card mb-4">
         <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div class="col-md-7">
-                <h5 class="card-title mb-2 mb-md-0">{{ __('members.Student_list')}}</h5>
+                <h5 class="card-title mb-2 mb-md-0">{{ __('members.Student_list') }}</h5>
             </div>
             <div class="col-md-5 text-end">
                 <form method="GET" action="{{ route('members.index') }}" class="d-flex">
@@ -38,38 +38,47 @@
                 <table class="table table-hover">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.id') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.name') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.name_latin') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.gender') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.phone') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.year') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.specialty') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.image') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th
+                                class="text-center px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 {{ __('members.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse ($members as $member)
                             <tr class="hover:bg-gray-100">
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->memberId }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->name_latin }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}
+                                <td class="text-center px-6 py-4 whitespace-nowrap">{{ $member->memberId }}</td>
+                                <td class="text-center px-6 py-4 whitespace-nowrap">{{ $member->name }}</td>
+                                <td class="text-center px-6 py-4 whitespace-nowrap">{{ $member->name_latin }}</td>
+                                <td class="text-center px-6 py-4 whitespace-nowrap">
+                                    {{ $member->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->phone }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->study->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $member->category->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="text-center px-6 py-4 whitespace-nowrap">{{ $member->phone }}</td>
+                                <td class="text-center px-6 py-4 whitespace-nowrap">{{ $member->study->name }}</td>
+                                <td class="text-center px-6 py-4 whitespace-nowrap">{{ $member->category->name }}</td>
+                                <td class="text-center px-6 py-4 whitespace-nowrap">
                                     @if ($member->image)
                                         <img src="{{ asset($member->image) }}" alt="Image" style="width: 30px;">
                                     @endif
@@ -82,15 +91,19 @@
                                     <a href="{{ route('members.edit', $member->id) }}" class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <form action="{{ route('members.destroy', $member->id) }}" method="POST"
-                                        style="display:inline;" class="delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-sm btn-delete"
-                                            data-form="{{ $member->id }}">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+    
+                                    @if (Auth::check() && Auth::user()->usertype === 'admin')
+                                        <!-- Admin-specific delete button -->
+                                        <form action="{{ route('members.destroy', $member->id) }}" method="POST"
+                                            style="display:inline;" class="delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger btn-sm btn-delete"
+                                                data-form="{{ $member->id }}">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -117,7 +130,8 @@
                     <div id="memberDetails"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('members.back') }}</button>
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">{{ __('members.back') }}</button>
                 </div>
             </div>
         </div>
@@ -125,20 +139,20 @@
 
     <!-- JavaScript for Modals and Confirmation Dialogs -->
     <script>
-       const genderText = {
-        male: '@lang('members.male')',
-        female: '@lang('members.female')'
-    };
+        const genderText = {
+            male: '@lang('members.male')',
+            female: '@lang('members.female')'
+        };
 
-    document.querySelectorAll('.btn-view').forEach(button => {
-        button.addEventListener('click', function() {
-            const memberId = this.getAttribute('data-id');
+        document.querySelectorAll('.btn-view').forEach(button => {
+            button.addEventListener('click', function() {
+                const memberId = this.getAttribute('data-id');
 
-            fetch(`/members/${memberId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const gender = data.gender === 'male' ? genderText.male : genderText.female;
-                    document.getElementById('memberDetails').innerHTML = `
+                fetch(`/members/${memberId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const gender = data.gender === 'male' ? genderText.male : genderText.female;
+                        document.getElementById('memberDetails').innerHTML = `
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -158,11 +172,11 @@
                         </div>
                     </div>
                 `;
-                    new bootstrap.Modal(document.getElementById('memberModal')).show();
-                })
-                .catch(error => console.error('Error:', error));
+                        new bootstrap.Modal(document.getElementById('memberModal')).show();
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         });
-    });
         document.querySelectorAll('.btn-delete').forEach(button => {
             button.addEventListener('click', function() {
                 const form = this.closest('form');

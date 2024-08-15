@@ -1,116 +1,153 @@
+
 @extends('layouts.app')
 
 @section('content')
-<div class="card mt-3">
-    <div class="card-header">
+<div class="row mt-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>{{ __('messages.borrow_book') }}</h1>
+        <button type="button" id="add-book" class="btn btn-success">
+            <i class="fa-solid fa-plus"></i> {{ __('messages.add') }}
+        </button>
     </div>
-    <div class="card-body">
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-        <form action="{{ route('loans.store') }}" method="POST">
-            @csrf
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="isbn" class="form-label">{{ __('messages.code') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;"><i class="fa-duotone fa-solid fa-code"></i></span>
-                        <select id="isbn" name="isbn" class="form-control" required>
-                            <option value="">{{ __('messages.select_book') }}</option>
-                            @foreach ($books as $book)
-                                <option value="{{ $book->isbn }}" 
-                                    data-id="{{ $book->id }}"
-                                    data-title="{{ $book->title }}"
-                                    data-price="{{ $book->price }}">
-                                    {{ $book->isbn }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
 
-                <!-- Book Title -->
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="title">{{ __('messages.title') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-book"></i></span>
-                    <input type="text" id="title" name="title" class="form-control" value="{{ old('title') }}" readonly>
-                </div>
-            </div>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-                <!-- Member Dropdown -->
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="member_id" class="form-label">{{ __('messages.student') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                        <select id="member_id" name="member_id" class="form-control" required>
-                            <option value="">ID សិស្ស</option>
-                            @foreach ($members as $member)
-                                <option value="{{ $member->id }}"
-                                    {{ old('member_id') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->memberId }} - {{ $member->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+    <form action="{{ route('loans.store') }}" method="POST">
+        @csrf
+        <div class="table-responsive">
+            <table class="table table-bordered" id="books-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Book</th>
+                        <th style="width: 20%;">Member</th>
+                        <th style="width: 15%;">Price</th>
+                        <th style="width: 15%;">Loan Date</th>
+                        <th style="width: 15%;">Due Date</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="book-row" data-index="0">
+                        <td>
+                            <select name="books[0][book_id]" class="form-control book-select select2" required>
+                                <option value="">Select a book</option>
+                                @foreach ($books as $book)
+                                    <option value="{{ $book->id }}" {{ old('books.0.book_id') == $book->id ? 'selected' : '' }} 
+                                        data-title="{{ $book->title }}" 
+                                        data-price="{{ $book->price }}">
+                                        {{ $book->isbn }} - {{ $book->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <select name="books[0][member_id]" class="form-control select2" required>
+                                <option value="">Select a member</option>
+                                @foreach ($members as $member)
+                                    <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="books[0][price]" class="form-control" min="1" required>
+                        </td>
+                        <td>
+                            <input type="date" name="books[0][loan_date]" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="date" name="books[0][due_date]" class="form-control" required>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger remove-book">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                <!-- Price Input -->
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="price">{{ __('messages.price') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;">
-                            <i class="fa-sharp fa-solid fa-dollar-sign"></i>
-                        </span>
-                        <input type="number" id="price" name="price" class="form-control" value="{{ old('price') }}">
-                    </div>
-                </div>
-
-                <!-- Loan Date Input -->
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="loan_date">{{ __('messages.loan_date') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                        <input type="date" id="loan_date" name="loan_date" class="form-control" value="{{ old('loan_date') }}" required>
-                    </div>
-                </div>
-
-                <!-- Due Date Input -->
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="due_date">{{ __('messages.due_date') }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                        <input type="date" id="due_date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>
-                    </div>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-success">{{ __('messages.save') }}</button>
-        </form>
-    </div>
+        <!-- Buttons -->
+        <button type="submit" class="btn btn-success mt-3">{{ __('books.save') }}</button>
+    </form>
 </div>
 @endsection
 
 @section('scripts')
 <script>
     $(document).ready(function() {
-        // Initialize Select2 for member dropdown
-        $('#member_id').select2({
+        let bookIndex = 1;
+
+        // Initialize Select2
+        $('.select2').select2({
             theme: 'bootstrap-5'
         });
 
-        // Initialize Select2 for ISBN dropdown
-        $('#isbn').select2({
-            theme: 'bootstrap-5'
+        // Add new book row
+        $('#add-book').on('click', function() {
+            const newRowHtml = `
+                <tr class="book-row" data-index="${bookIndex}">
+                    <td>
+                        <select name="books[${bookIndex}][book_id]" class="form-control book-select select2" required>
+                            <option value="">Select a book</option>
+                            @foreach ($books as $book)
+                                <option value="{{ $book->id }}" 
+                                    data-title="{{ $book->title }}" 
+                                    data-price="{{ $book->price }}">
+                                    {{ $book->isbn }} - {{ $book->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="books[${bookIndex}][member_id]" class="form-control select2" required>
+                            <option value="">Select a member</option>
+                            @foreach ($members as $member)
+                                <option value="{{ $member->id }}">{{ $member->name }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="books[${bookIndex}][price]" class="form-control" min="1" required>
+                    </td>
+                    <td>
+                        <input type="date" name="books[${bookIndex}][loan_date]" class="form-control" required>
+                    </td>
+                    <td>
+                        <input type="date" name="books[${bookIndex}][due_date]" class="form-control" required>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger remove-book">Remove</button>
+                    </td>
+                </tr>
+            `;
+
+            $('#books-table tbody').append(newRowHtml);
+
+            // Reinitialize Select2 for newly added elements
+            $('.select2').select2({
+                theme: 'bootstrap-5'
+            });
+
+            bookIndex++;
         });
 
-        // Update title and price fields based on selected ISBN
-        $('#isbn').on('change', function() {
-            var selectedOption = $(this).find('option:selected');
-            $('#title').val(selectedOption.data('title'));
-            $('#price').val(selectedOption.data('price'));
+        // Handle changes to the book selection
+        $(document).on('change', '.book-select', function() {
+            let index = $(this).closest('.book-row').data('index');
+            let selectedOption = $(this).find('option:selected');
+            $(`input[name="books[${index}][price]"]`).val(selectedOption.data('price'));
+        });
+
+        // Remove book row
+        $(document).on('click', '.remove-book', function() {
+            $(this).closest('tr').remove();
         });
     });
 </script>

@@ -1,33 +1,5 @@
 <?php
 
-// namespace App\Http\Controllers;
-
-// use App\Models\LoanBookHistory;
-// use App\Models\Member;
-
-// class LoanBookHistoryController extends Controller
-// {
-//     public function index()
-//     {
-//         $members = Member::all();
-//         $loanHistory = LoanBookHistory::with(['book', 'member'])->get();
-//         return view('loanBookHistories.index', compact('loanHistory'));
-//     }
-//     public function show($id)
-//     {
-//         $members = Member::all();
-//         $loanHistory = LoanBookHistory::with(['book', 'member'])->findOrFail($id);
-
-//         return view('loanBookHistories.show', compact('loanHistory'));
-//     }
-
-//     public function print($id)
-//     {
-//         $loanHistory = LoanBookHistory::with(['book', 'member'])->findOrFail($id);
-
-//         return view('loanBookHistories.print', compact('loanHistory'));
-//     }
-// }
 
 namespace App\Http\Controllers;
 
@@ -40,13 +12,16 @@ class LoanBookHistoryController extends Controller
 {
     public function index()
     {
+
         $books = Book::all();
         $members = Member::all();
         $loanHistory = LoanBookHistory::with(['book', 'member'])->get();
-        $totalLoanHistory = $loanHistory->count(); // Total count of loan histories
+        $totalLoanHistory = $loanHistory->count();
+        $newHistory = LoanBookHistory::orderBy('created_at', 'desc')->first();
 
-        return view('loanBookHistories.index', compact('loanHistory', 'totalLoanHistory'));
+        return view('loanBookHistories.index', compact('loanHistory', 'totalLoanHistory', 'newHistory'));
     }
+
 
     public function show($id)
     {
@@ -63,5 +38,48 @@ class LoanBookHistoryController extends Controller
 
         return view('loanBookHistories.print', compact('loanHistory'));
     }
+    public function memberLoanDetails($memberId)
+    {
+        $member = Member::findOrFail($memberId);
+        $loanHistory = LoanBookHistory::where('member_id', $memberId)->with('book')->get();
+        $loanHistoryCount = $loanHistory->count();
+
+        return view('loanBookHistories.member-loan-details', compact('member', 'loanHistory', 'loanHistoryCount'));
+    }
+    // public function showInvoice($id)
+    // {
+
+    //     $loanHistory = LoanBookHistory::with('member', 'book')->findOrFail($id);
+    //     return view('loanBookHistories.show-invoice-return', compact('loanHistory'));
+    // }
+    public function showInvoice($id)
+    {
+        // Fetch the loan details along with related member and book
+        $loanHistory = LoanBookHistory::with('member', 'book')->findOrFail($id);
+
+        // Get the search date and time from the request, if available
+        $searchDate = request('date');
+        $searchTime = request('time');
+
+        // Query to get other loans by the same member, excluding the current loan
+        $query = LoanBookHistory::with('book')
+        ->where('member_id', $loanHistory->member_id)
+        ->where('id', '!=', $id); // Exclude the current loan to avoid du
+
+        // Apply filters based on search date and time
+        if ($searchDate) {
+            $query->whereDate('loan_date', $searchDate);
+        }
+        if ($searchTime) {
+            $query->whereTime('loan_date', $searchTime);
+        }
+
+        // Get the filtered list of loans
+        $memberLoans = $query->get();
+
+        // Return the view with the loan history and other loans
+        return view('loanBookHistories.show-invoice-return', compact('loanHistory', 'memberLoans', 'searchDate', 'searchTime'));
+    }
+
 }
 

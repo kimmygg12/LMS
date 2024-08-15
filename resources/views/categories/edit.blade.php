@@ -22,7 +22,7 @@
             <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $category->name) }}" required>
         </div>
 
-        <button type="submit" class="btn btn-primary">{{ __('messages.update_category') }}</button>
+        <button type="submit" class="btn btn-success">{{ __('messages.update_category') }}</button>
     </form>
 </div>
 @endsection
