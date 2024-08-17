@@ -50,8 +50,8 @@ class LoanBookHistory extends Model
     {
         return $this->belongsTo(Member::class);
     }
-    public function subject()
+    public function genre()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->belongsTo(Genre::class);
     }
 }

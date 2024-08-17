@@ -128,11 +128,11 @@
         <!-- Header with Logo and University Name -->
         <div class="text-center mb-4">
             <div class="d-flex align-items-center justify-content-center">
-                <img src="{{ asset('images/a1.jpg') }}" alt="University Logo"
+                <img src="{{ asset('images/logo.jpg') }}" alt="University Logo"
                     style="width: 100px; height: auto; margin-right: 15px;" />
                 <div>
-                    <h1 class="mb-0">សាកលវិទ្យាល័យជាតិមានជ័យ</h1>
-                    <h5 class="mt-2">NMU-National Meanchey University</h5>
+                    <h1 class="mb-0">ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ</h1>
+                    <h5 class="mt-2">Library Management System</h5>
                 </div>
             </div>
         </div>

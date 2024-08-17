@@ -32,7 +32,7 @@
                         <p class="card-text"><strong>{{ __('books.isbn') }}:</strong> {{ $book->isbn }}</p>
                         <p class="card-text"><strong>{{ __('books.publication_date') }}:</strong> {{ $book->publication_date }}</p>
                         <p class="card-text"><strong>{{ __('books.quantity') }}:</strong> {{ $book->quantity }}</p>
-                        <p class="card-text"><strong>{{ __('books.subject') }}:</strong> {{ $book->subject->name }}</p>
+                        <p class="card-text"><strong>{{ __('books.genre') }}:</strong> {{ $book->genre ? $book->genre->name : __('messages.not_available') }}</p>
                         <p class="card-text"><strong>{{ __('books.status') }}:</strong>
                             @if ($book->status === 'available')
                                 <span class="badge bg-success">{{ __('books.available') }}</span>

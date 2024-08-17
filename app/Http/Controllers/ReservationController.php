@@ -11,9 +11,6 @@ use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
-    /**
-     * Handle the reservation of a book.
-     */
     public function reserve(Request $request)
     {
         // Validate the request
@@ -30,10 +27,8 @@ class ReservationController extends Controller
             return redirect()->back()->with('error', 'The book is not available for reservation.');
         }
 
-        // Generate a unique reservation number
         $reservationNumber = $this->generateReservationNumber();
 
-        // Create the reservation
         LoanBook::create([
             'book_id' => $book->id,
             'member_id' => $request->member_id,

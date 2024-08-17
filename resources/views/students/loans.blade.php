@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.studentbook')
 
 @section('title', 'My Loans')
 
@@ -22,7 +22,8 @@
                     @foreach($loans as $loan)
                         <tr>
                             <td>{{ $loan->invoice_number }}</td>
-                            <td>{{ $loan->book->title }}</td>
+                            <td>{{ $loan->book ? $loan->book->title : 'N/A' }}</td>
+                            
                             <td>{{ $loan->loan_date ? $loan->loan_date->format('Y-m-d') : 'N/A' }}</td>
                             <td>{{ $loan->due_date ? $loan->due_date->format('Y-m-d') : 'N/A' }}</td>
                             <td>
@@ -48,6 +49,6 @@
             <p>{{ __('messages.no_loans') }}</p>
         @endif
 
-        <a href="{{ route('members.dashboard') }}" class="btn btn-secondary mt-3">{{ __('messages.back_to_dashboard') }}</a>
+        <a href="{{ route('students.dashboard') }}" class="btn btn-secondary mt-3">{{ __('messages.back_to_dashboard') }}</a>
     </div>
 @endsection

@@ -95,14 +95,14 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="subject_id">{{ __('books.subject') }}</label>
+                            <label for="genre_id">{{ __('books.genre') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text d-flex align-items-center justify-content-center"
                                     style="width: 40px;"><i class="fa-sharp fa-light fa-layer-group"></i></span>
-                                <select class="form-control" id="subject_id" name="subject_id">
-                                    <option value="">{{ __('books.subject') }}</option>
-                                    @foreach ($subjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                <select class="form-control" id="genre_id" name="genre_id">
+                                    <option value="">{{ __('books.genre') }}</option>
+                                    @foreach ($genres as $genre)
+                                        <option value="{{ $genre->id }}">{{ $genre->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -158,7 +158,7 @@
                 });
             });
             $(document).ready(function() {
-                $('#subject_id').select2({
+                $('#genre_id').select2({
                     theme: 'bootstrap-5'
                 });
             });

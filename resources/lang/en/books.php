@@ -32,6 +32,7 @@ return [
     'status' => 'Status',
     'default_cover' => 'Default Cover',
     'book_details' => 'Book Details',
+    'select_genre' => 'Select Genre',
 
     'genre' => 'Genre',
     'description' => 'Description',

@@ -48,4 +48,6 @@ return [
     'status_reserved' => 'បានកក់',
     'status_borrowed' => 'មិនមាន',
     'status_unavailable' => 'មិនមាន',
+    'select_genre' => 'ជ្រើសរើសប្រភេទ',
+
 ];

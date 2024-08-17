@@ -51,8 +51,8 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <img src="{{ asset('images/a1.jpg') }}" alt="University Logo" class="navbar-logo mr-2" />
-        <a class="navbar-brand" href="{{ route('members.dashboard') }}">
+        <img src="{{ asset('images/logo.jpg') }}" alt="University Logo" class="navbar-logo mr-2" />
+        <a class="navbar-brand" href="{{ route('students.dashboard') }}">
             {{ __('messages.library_name') }}
 
             <br>
@@ -65,15 +65,15 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('members.dashboard') }}">{{ __('messages.home') }}</a>
+                    <a class="nav-link" href="{{ route('students.dashboard') }}">{{ __('messages.home') }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link"
-                        href="{{ route('members.showmember', ['id' => Auth::guard('member')->id()]) }}">{{ __('messages.my_details') }}</a>
+                        href="{{ route('students.show-student', ['id' => Auth::guard('member')->id()]) }}">{{ __('messages.my_details') }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link"
-                        href="{{ route('members.showLoans', ['id' => Auth::guard('member')->id()]) }}">{{ __('messages.my_books') }}</a>
+                        href="{{ route('students.borrow-student', ['id' => Auth::guard('member')->id()]) }}">{{ __('messages.my_books') }}</a>
                 </li>
             </ul>
 

@@ -126,8 +126,6 @@ class ReportController extends Controller
         );
     }
 
-  
-    
     public function newBooks(Request $request)
     {
         // Default to the current month if no dates are provided

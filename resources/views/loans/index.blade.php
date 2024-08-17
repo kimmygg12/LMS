@@ -206,7 +206,7 @@
             isbn: "{{ __('messages.isbn') }}",
             book_title: "{{ __('messages.book_title') }}",
             author: "{{ __('messages.author') }}",
-            subject: "{{ __('messages.genre') }}",
+            genre: "{{ __('messages.genre') }}",
             price: "{{ __('messages.price') }}",
             n_a: "{{ __('messages.n/a') }}"
         };
@@ -273,7 +273,7 @@
                                             <th>${translations.isbn}</th>
                                             <th>${translations.book_title}</th>
                                             <th>${translations.author}</th>
-                                            <th>${translations.subject}</th>
+                                            <th>${translations.genre}</th>
                                             <th>${translations.price}</th>
                                         </tr>
                                     </thead>
@@ -282,7 +282,7 @@
                                             <td>${data.isbn}</td>
                                             <td>${data.book_title}</td>
                                             <td>${data.author}</td>
-                                            <td>${data.subject}</td>
+                                            <td>${data.genre}</td>
                                             <td>${data.price || translations.n_a}</td>
                                         </tr>
                                     </tbody>

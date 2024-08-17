@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.studentbook')
 
 @section('title', __('books.book_details'))
 
@@ -25,9 +25,19 @@
                     </div>
                     <div class="col-md-9">
                         <h5 class="card-title">{{ $book->title }}</h5>
+
                         <p class="card-text"><strong>{{ __('books.isbn') }}:</strong> {{ $book->isbn }}</p>
-                        <p class="card-text"><strong>{{ __('books.author') }}:</strong> {{ $book->author->name }}</p>
-                        <p class="card-text"><strong>{{ __('books.genre') }}:</strong> {{ $book->subject->name }}</p>
+
+                        <p class="card-text">
+                            <strong>{{ __('books.author') }}:</strong>
+                            {{ $book->author ? $book->author->name : __('books.no_author') }}
+                        </p>
+
+                        <p class="card-text">
+                            <strong>{{ __('books.genre') }}:</strong>
+                            {{ $book->genre ? $book->genre->name : __('books.no_genre') }}
+                        </p>
+
                         <p class="card-text"><strong>{{ __('books.publication_date') }}:</strong>
                             {{ $book->publication_date }}</p>
                         <p class="card-text"><strong>{{ __('books.quantity') }}:</strong> {{ $book->quantity }}</p>
@@ -57,7 +67,7 @@
                             </button>
                         </form>
 
-                        <a href="{{ route('members.dashboard') }}" class="btn btn-primary mt-3">
+                        <a href="{{ route('students.dashboard') }}" class="btn btn-primary mt-3">
                             <i class="bi bi-arrow-left-circle"></i> {{ __('books.back') }}
                         </a>
                     </div>

@@ -7,24 +7,24 @@
                 {{ __('messages.home') }}
             </a>
 
-            <a class="nav-link {{ request()->routeIs('books.index', 'books.create', 'subjects.index', 'subjects.create', 'books.show', 'books.edit', 'subjects.edit', 'authors.index') ? 'active' : '' }}"
+            <a class="nav-link {{ request()->routeIs('books.index', 'books.create', 'genres.index', 'genres.create', 'books.show', 'books.edit', 'genres.edit', 'authors.index') ? 'active' : '' }}"
                 data-toggle="collapse" href="#collapseBook" role="button"
-                aria-expanded="{{ request()->routeIs('books.index', 'books.create', 'subjects.index', 'subjects.create', 'books.show', 'books.edit', 'subjects.edit', 'authors.index') ? 'true' : 'false' }}"
+                aria-expanded="{{ request()->routeIs('books.index', 'books.create', 'genres.index', 'genres.create', 'books.show', 'books.edit', 'genres.edit', 'authors.index') ? 'true' : 'false' }}"
                 aria-controls="collapseBook">
                 <div class="sb-nav-link-icon"><i class="fa-solid fa-book"></i></div>
                 {{ __('messages.books') }}
                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
 
-            <div class="collapse {{ request()->routeIs('books.index', 'books.create', 'subjects.index', 'subjects.create', 'books.show', 'books.edit', 'subjects.edit', 'authors.index') ? 'show' : '' }}"
+            <div class="collapse {{ request()->routeIs('books.index', 'books.create', 'genres.index', 'genres.create', 'books.show', 'books.edit', 'genres.edit', 'authors.index') ? 'show' : '' }}"
                 id="collapseBook">
                 <nav class="sb-sidenav-menu-nested nav">
                     <a class="nav-link {{ request()->routeIs('books.index', 'books.show', 'books.edit') ? 'active' : '' }}"
                         href="{{ route('books.index') }}">{{ __('messages.book_list') }}</a>
                     <a class="nav-link {{ request()->routeIs('books.create') ? 'active' : '' }}"
                         href="{{ route('books.create') }}">{{ __('messages.add_book') }}</a>
-                    <a class="nav-link {{ request()->routeIs('subjects.index', 'subjects.create', 'subjects.edit') ? 'active' : '' }}"
-                        href="{{ route('subjects.index') }}">{{ __('messages.subjects') }}</a>
+                    <a class="nav-link {{ request()->routeIs('genres.index', 'genres.create', 'genres.edit') ? 'active' : '' }}"
+                        href="{{ route('genres.index') }}">{{ __('messages.genres') }}</a>
                     <a class="nav-link {{ request()->routeIs('authors.index', 'authors.create', 'authors.edit') ? 'active' : '' }}"
                         href="{{ route('authors.index') }}">{{ __('messages.authors') }}</a>
                 </nav>

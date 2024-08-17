@@ -4,7 +4,7 @@ return [
 
 
     'home' => 'Home',
-    'library_name' => 'National Meanchey University',
+'library_name' => 'Library Management System',
     'english' => 'English',
     'khmer' => 'Khmer',
     'login' => 'Login',
@@ -209,4 +209,12 @@ return [
     'member_name' => 'Member Name',
     'no_loans' => 'You have no borrow at the moment.',
     'back_to_dashboard' => 'Back',
+    'add_new_genre' => 'Add New Genre',
+    'genre_name' => 'Genre Name',
+    'edit_genre' => 'Edit Genre',
+    'genres' => 'Genres',
+    'not_available' => 'Not available',
+
+
+    
 ];

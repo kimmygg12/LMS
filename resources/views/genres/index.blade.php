@@ -3,8 +3,8 @@
 @section('content')
     <div class="card mt-3">
         <div class="card-header">
-            <h2>{{(__('books.subject'))}}</h2>
-            <a href="{{ route('subjects.create') }}" class="btn btn-success float-end">{{__('members.Create_list')}}</a>
+            <h2>{{ __('books.genre') }}</h2>
+            <a href="{{ route('genres.create') }}" class="btn btn-success float-end">{{ __('members.Create_list') }}</a>
         </div>
         <div class="card-body">
             @if (session('success'))
@@ -22,14 +22,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($subjects as $subject)
+                    @foreach ($genres as $genre)
                         <tr>
-                            <td>{{ $subject->id }}</td>
-                            <td>{{ $subject->name }}</td>
+                            <td>{{ $genre->id }}</td>
+                            <td>{{ $genre->name }}</td>
                             <td>
-                                <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-success btn-sm"> <i class="fa-solid fa-pen-to-square"></i></a>
+                                <a href="{{ route('genres.edit', $genre->id) }}" class="btn btn-success btn-sm">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
                                 @if (Auth::check() && Auth::user()->usertype === 'admin')
-                                <form action="{{ route('subjects.destroy', $subject->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('genres.destroy', $genre->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>

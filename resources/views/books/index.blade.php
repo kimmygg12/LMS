@@ -64,7 +64,7 @@
                         <td class="text-center">{{ $book->title }}</td>
                         <td class="text-center">{{ $book->author->name }}</td>
                         <td class="text-center">{{ $book->isbn }}</td>
-                        <td class="text-center">{{ $book->subject->name ?? __('messages.no_subject') }}</td>
+                        <td class="text-center">{{ $book->genre->name ?? __('messages.no_subject') }}</td>
                         <td class="text-center">{{ $book->publication_date }}</td>
                         <td class="text-center">{{ $book->quantity }} {{ __('messages.Total') }}</td>
                         <td class="text-center">

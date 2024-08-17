@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('isbn')->unique();
             $table->date('publication_date')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('subject_id')->nullable()->constrained('subjects')->onDelete('set null'); // Foreign key
+            $table->foreignId('genre_id')->nullable()->constrained('genres')->onDelete('set null');
+            // $table->foreignId('subject_id')->nullable()->constrained('subjects')->onDelete('set null'); // Foreign key
             $table->string('cover_image')->nullable();
             $table->enum('status', ['available', 'borrowed', 'reserved', 'deleted'])->default('available');
             $table->integer('quantity')->default(1);

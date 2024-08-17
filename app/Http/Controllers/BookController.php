@@ -4,39 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use App\Models\Book;
-use App\Models\Subject;
+use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 class BookController extends Controller
 {
-    public function homeStudent(Request $request)
-    {
-        $search = $request->input('search');
-        $query = Book::query();
+   
+    // public function showBook(Book $book)
+    // {
+    //     return view('members.student-book', compact('book'));
+    // }
 
-        if ($search) {
-            $query->where('title', 'like', "%{$search}%")
-                ->orWhere('isbn', 'like', "%{$search}%")
-                ->orWhereHas('author', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                });
-        }
-
-        $books = $query->paginate(5);
-
-        return view('home_student', compact('books'));
-    }
-    public function showBook(Book $book)
-    {
-        return view('members.student-book', compact('book'));
-    }
-
-    public function searchBooks(Request $request)
-    {
-        $search = $request->input('search');
-        return redirect()->route('home.student', ['search' => $search]);
-    }
+    // public function searchBooks(Request $request)
+    // {
+    //     $search = $request->input('search');
+    //     return redirect()->route('home.student', ['search' => $search]);
+    // }
     public function search(Request $request)
     {
         $query = $request->input('query');
@@ -61,7 +45,7 @@ class BookController extends Controller
         }
 
         // Fetch books ordered by created_at in descending order
-        $books = $query->with('author', 'subject')
+        $books = $query->with('author', 'genre')
             ->orderBy('created_at', 'desc')
             ->paginate(3);
 
@@ -76,9 +60,9 @@ class BookController extends Controller
     public function create()
     {
         $authors = Author::all(); // Fetch all authors
-        $subjects = Subject::all(); // Fetch all subjects
+        $genres = Genre::all(); // Fetch all genres
 
-        return view('books.create', compact('authors', 'subjects'));
+        return view('books.create', compact('authors', 'genres'));
     }
 
     public function store(Request $request)
@@ -89,7 +73,7 @@ class BookController extends Controller
             'isbn' => 'nullable|string|max:200',
             'publication_date' => 'nullable|date',
             'description' => 'nullable|string',
-            'subject_id' => 'nullable|integer|exists:subjects,id',
+            'genre_id' => 'nullable|integer|exists:genres,id',
             'status' => 'nullable|in:available,borrowed,reserved',
             'quantity' => 'required|integer|min:1', // Add quantity validation
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -104,7 +88,7 @@ class BookController extends Controller
             $book->publication_date = $request->publication_date;
             $book->description = $request->description;
             $book->quantity = $request->quantity; // Set quantity
-            $book->subject_id = $request->subject_id;
+            $book->genre_id = $request->genre_id;
 
             // Handle cover image upload
             if ($request->hasFile('cover_image')) {
@@ -142,8 +126,8 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
         $authors = Author::all();
-        $subjects = Subject::all();
-        return view('books.edit', compact('book', 'authors', 'subjects'));
+        $genres = Genre::all(); // Fetch all genres
+        return view('books.edit', compact('book', 'authors', 'genres'));
     }
 
 
@@ -155,7 +139,7 @@ class BookController extends Controller
             'isbn' => 'required|string|unique:books,isbn,' . $id,
             'publication_date' => 'required|date',
             'description' => 'nullable|string',
-            'subject_id' => 'nullable|integer|exists:subjects,id',
+            'genre_id' => 'nullable|integer|exists:genres,id',
             'status' => 'required|string',
             'quantity' => 'required|integer|min:1', // Add quantity validation
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -168,7 +152,7 @@ class BookController extends Controller
         $book->publication_date = $request->publication_date;
         $book->description = $request->description;
         $book->status = $request->status;
-        $book->subject_id = $request->subject_id;
+        $book->genre_id = $request->genre_id;
         $book->quantity = $request->quantity; // Update quantity
 
 

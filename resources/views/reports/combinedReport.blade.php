@@ -143,7 +143,7 @@
                         <tr>
                             <td class="text-center">{{ $item['book']->isbn }}</td>
                             <td class="text-center">{{ $item['book']->title }}</td>
-                            <td class="text-center">{{ $item['book']->subject->name }}</td>
+                            <td class="text-center">{{ $item['book']->genre ? $item['book']->genre->name : 'N/A' }}</td>
                             <td class="text-center">{{ $item['remaining_quantity'] }} {{ __('messages.Total') }}</td>
                             <td class="text-center">{{ $item['total_borrowed'] }} {{ __('messages.Total') }}</td>
                             {{-- <td class="text-center">{{ $item['quantity_on_loan'] }}</td> --}}

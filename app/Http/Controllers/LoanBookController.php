@@ -68,7 +68,7 @@ class LoanBookController extends Controller
             'study_name' => $loan->member->study->name,
             'category_name' => $loan->member->category->name,
             'author' => $loan->book->author->name,
-            'subject' => $loan->book->subject->name,
+            'genre' => $loan->book->genre->name,
         ]);
     }
     public function store(Request $request)
@@ -392,12 +392,6 @@ class LoanBookController extends Controller
 
         return view('loans.member-loan-details', compact('member', 'loans', 'loanCount'));
     }
-    // public function showInvoice($id)
-    // {
-
-    //     $loan = LoanBook::with('member', 'book')->findOrFail($id);
-    //     return view('loans.show-invoice', compact('loan'));
-    // }
     public function showInvoice($id)
     {
         // Fetch the loan details along with related member and book
@@ -455,10 +449,8 @@ class LoanBookController extends Controller
             'status' => 'reserved',
         ]);
 
-        return redirect()->route('reservations.index')->with('success', 'Book reserved successfully.');
+        return redirect()->route('reservations.index');
     }
-
-    // Generate a unique invoice number
 
     public function approveReservation($id)
     {
@@ -492,13 +484,9 @@ class LoanBookController extends Controller
     }
     public function showApproveForm(LoanBook $loan)
     {
-
-        // Ensure the loan is in 'reserved' status
         if ($loan->status !== 'reserved') {
             return redirect()->route('loans.index')->with('error', 'Loan is not in reserved status.');
         }
-
-        // Return the view with the loan details
         return view('loans.approve', compact('loan'));
     }
 
@@ -508,45 +496,37 @@ class LoanBookController extends Controller
         // if (Auth::user()->usertype !== 'admin') {
         //     return redirect()->route('loans.index')->with('error', 'Unauthorized action.');
         // }
-        
-        // Ensure the loan is in 'reserved' status
+
         if ($loan->status !== 'reserved') {
             return redirect()->route('loans.index')->with('error', 'Loan is not in reserved status.');
         }
-        
-        // Validate the price input
+
         $request->validate([
             'price' => 'required|numeric|min:0',
         ]);
-        
-        // Fetch the book associated with the loan
+
         $book = Book::find($loan->book_id);
-        
+
         if (!$book) {
             return redirect()->route('loans.index')->with('error', 'Book not found.');
         }
-        
-        // Ensure there is enough quantity for the loan
+
         if ($book->quantity < 1) {
             return redirect()->route('loans.index')->with('error', 'Not enough quantity available for the loan.');
         }
-        
+
         // Approve the loan
         $loan->status = 'borrowed'; // Or 'approved' if that's the intended status
         $loan->loan_date = Carbon::now()->toDateString();
         $loan->due_date = Carbon::now()->addDays(14)->toDateString(); // Example: 2 weeks loan
-        $loan->price = $request->input('price'); // Set the price from the input
+        $loan->price = $request->input('price');
         $loan->save();
-        
-        // Decrease the book's quantity
+
         $book->decrement('quantity');
-    
-        // Update the book's status based on the quantity
         $book->update(['status' => $book->quantity > 0 ? 'available' : 'borrowed']);
-        
-        return redirect()->route('loans.index')->with('success', 'Loan approved successfully.');
+        return redirect()->route('loans.index');
     }
-    
+
     public function rejectReservation($id)
     {
         $reservation = LoanBook::findOrFail($id);
@@ -566,28 +546,23 @@ class LoanBookController extends Controller
         return redirect()->route('loans.index');
     }
     public function reApproveReservation($id)
-{
-    $reservation = LoanBook::findOrFail($id);
+    {
+        $reservation = LoanBook::findOrFail($id);
 
-    if ($reservation->status !== 'rejected') {
-        return redirect()->back()->with('error', 'Reservation not found or not rejected.');
+        if ($reservation->status !== 'rejected') {
+            return redirect()->back()->with('error', 'Reservation not found or not rejected.');
+        }
+
+        $book = Book::find($reservation->book_id);
+
+        if (!$book || $book->quantity < 1) {
+            return redirect()->back()->with('error', 'The book is not available for re-approval.');
+        }
+
+        $reservation->update(['status' => 'reserved']);
+        $book->update(['status' => 'available']);
+
+        return redirect()->route('loans.index');
     }
-
-    // Optionally, update the book status and quantity if needed
-    $book = Book::find($reservation->book_id);
-
-    if (!$book || $book->quantity < 1) {
-        return redirect()->back()->with('error', 'The book is not available for re-approval.');
-    }
-
-    // Update the reservation status to 'reserved'
-    $reservation->update(['status' => 'reserved']);
-
-    // Optionally, update the book status and quantity if needed
-    $book->update(['status' => 'available']);
-
-    return redirect()->route('loans.index');
-}
-
 
 }

@@ -16,12 +16,12 @@
             <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                 <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                     <div class="flex items-center mb-6">
-                        <img src="{{ asset('images/a1.jpg') }}" alt="University Logo" class="w-16 h-16 object-cover mr-4" />
+                        <img src="{{ asset('images/logo.jpg') }}" alt="University Logo" class="w-16 h-16 object-cover mr-4" />
                         <div>
                             <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                                សាកលវិទ្យាល័យជាតិមានជ័យ
+                                ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ
                             </h1>
-                            <p class="text-gray-500 tracking-tight text-gray-900">NMU UNIVERSITY</p>
+                            <p class="text-gray-500 tracking-tight text-gray-900">Library Management System</p>
                         </div>
                     </div>
                     <form class="space-y-4 md:space-y-6" method="post" action="{{ route('login') }}">

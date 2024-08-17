@@ -43,7 +43,7 @@
                     <tr onclick="window.location.href='{{ route('books.show', $book->id) }}';" style="cursor: pointer;">
                         <td>{{ $book->isbn }}</td>
                         <td>{{ $book->title }}</td>
-                        <td>{{ $book->subject->name }}</td>
+                        <td>{{ $book->genre ? $book->genre->name : 'N/A' }}</td>
                         <td>{{ $book->author->name }}</td>
                         <td>{{ $book->publication_date }}</td>
                         <td>{{ $book->quantity }} {{ __('messages.Total') }}</td>

@@ -67,9 +67,9 @@ class Book extends Model
     {
         return $this->hasMany(LoanBookHistory::class);
     }
-    public function subject()
+    public function genre()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->belongsTo(Genre::class);
     }
     public function handle()
     {
@@ -92,4 +92,5 @@ class Book extends Model
     {
         return $this->belongsTo(Member::class);
     }
+    
 }

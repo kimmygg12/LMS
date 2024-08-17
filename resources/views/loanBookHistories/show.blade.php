@@ -62,7 +62,7 @@
                             <td>{{ $loanHistory->book ? $loanHistory->book->isbn : 'N/A' }}</td>
                             <td>{{ $loanHistory->book ? $loanHistory->book->title : 'N/A' }}</td>
                             <td>{{ $loanHistory->book && $loanHistory->book->author->name ? $loanHistory->book->author->name : 'N/A' }}
-                            <td>{{ $loanHistory->book && $loanHistory->book->subject->name ? $loanHistory->book->subject->name : 'N/A' }}
+                            <td>{{ $loanHistory->book && $loanHistory->book->genre->name ? $loanHistory->book->genre->name : 'N/A' }}
                             </td>
                             </td>
                             <td>{{ $loanHistory->price ?? 'N/A' }} ៛</td>

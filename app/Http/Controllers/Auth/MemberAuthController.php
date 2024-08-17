@@ -43,7 +43,7 @@ class MemberAuthController extends Controller
     
         Auth::guard('member')->login($member);
     
-        return redirect()->route('members.dashboard');
+        return redirect()->route('students.dashboard');
     }
     
     public function showLoginForm()
@@ -56,7 +56,7 @@ class MemberAuthController extends Controller
         $credentials = $request->only('memberId', 'password');
 
         if (Auth::guard('member')->attempt($credentials)) {
-            return redirect()->route('members.dashboard');
+            return redirect()->route('students.dashboard');
         }
 
         return redirect()->back()->withErrors(['memberId' => 'Invalid Member ID or Password.']);
@@ -66,7 +66,7 @@ class MemberAuthController extends Controller
         Auth::guard('member')->logout();
 
         // return redirect()->route('member.login');
-        return redirect()->route('home.student');
+        return redirect()->route('student.home');
     }
 
 }

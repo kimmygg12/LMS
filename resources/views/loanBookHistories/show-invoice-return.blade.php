@@ -1,94 +1,3 @@
-{{-- @extends('layouts.app')
-
-@section('content')
-    <style>
-        @media print {
-            .print-button {
-                display: none;
-            }
-        }
-    </style>
-
-    <div class="container mt-4">
-        <div class="d-flex align-items-center justify-content-center mb-4">
-            <img src="{{ asset('images/a1.jpg') }}" alt="University Logo"
-                style="width: 100px; height: auto; margin-right: 15px;" />
-            <div class="text-center">
-                <h1 class="mb-0">សាកលវិទ្យាល័យជាតិមានជ័យ</h1>
-                <h5 class="mt-2">NMU-National Meanchey University</h5>
-            </div>
-        </div>
-
-        <div class="text-center mb-4">
-            <h1>បង្កាន់ដៃសងសៀវភៅ</h1>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <p><strong>ឈ្មោះ:</strong> {{ $loanHistory->member->name }} | {{ $loanHistory->member->memberId }}</p>
-                <p><strong>ឆ្នាំ:</strong> {{ $loanHistory->member->study->name ?? 'N/A' }} |
-                    {{ $loanHistory->member->category->name ?? 'N/A' }}</p>
-                <p><strong>ភេទ:</strong> {{ $loanHistory->member->gender == 'male' ? 'ប្រុស' : 'ស្រី' }}</p>
-            </div>
-            <div class="col-md-6 text-md-right">
-                <p><strong># </strong> {{ $loanHistory->invoice_number }}</p>
-            </div>
-        </div>
-
-        @if (!$loanHistory)
-            <p>No loan details found for this invoice.</p>
-        @else
-            @php
-                $hasRenewDate = !is_null($loanHistory->renew_date);
-            @endphp
-
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ចំណងជើង</th>
-                            <th>លេខសម្គាល់</th>
-                            <th>ថ្ងៃខ្ចី</th>
-                            <th>ថ្ងៃកំណត់</th>
-                            @if ($hasRenewDate)
-                                <th>ខ្ចីបន្ត</th>
-                            @endif
-                            <th>ថ្ងៃសង</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ $loanHistory->book->title }}</td>
-                            <td>{{ $loanHistory->book->isbn }}</td>
-                            <td>{{ \Carbon\Carbon::parse($loanHistory->loan_date)->format('m/d/Y') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($loanHistory->due_date)->format('m/d/Y') }}</td>
-                            @if ($hasRenewDate)
-                                <td>{{ $loanHistory->renew_date ? $loanHistory->renew_date->format('Y-m-d') : 'N/A' }}</td>
-                            @endif
-                            <td>{{ \Carbon\Carbon::parse($loanHistory->pay_date)->format('m/d/Y') }}</td>
-                            <td>
-                                {{ $loanHistory->status }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        @endif
-
-        <div class="row mt-4">
-            <div class="col-6">
-                <p>អ្នកសងសៀវភៅ</p>
-            </div>
-            <div class="col-6 text-end">
-                <p>បណ្ណារក្ស</p>
-            </div>
-        </div>
-
-        <button onclick="window.print();" class="btn btn-secondary mt-3 print-button mb-3"><i
-                class="fas fa-print"></i></button>
-    </div>
-@endsection --}}
 @extends('layouts.app')
 
 @section('content')
@@ -128,8 +37,8 @@
             <img src="{{ asset('images/a1.jpg') }}" alt="University Logo"
                 style="width: 100px; height: auto; margin-right: 15px;" />
             <div class="text-center">
-                <h1 class="mb-0">សាកលវិទ្យាល័យជាតិមានជ័យ</h1>
-                <h5 class="mt-2">NMU-National Meanchey University</h5>
+                <h1 class="mb-0">ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ</h1>
+                <h5 class="mt-2">Library Management System</h5>
             </div>
         </div>
         <div class="text-center mb-4">
@@ -213,13 +122,15 @@
                                 <td>{{ \Carbon\Carbon::parse($memberLoan->loan_date)->format('m/d/Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($memberLoan->due_date)->format('m/d/Y') }}</td>
                                 <td>{{ $memberLoan->renew_date ? $memberLoan->renew_date->format('Y-m-d') : 'N/A' }}</td>
-                                <td>{{ $memberLoan->pay_date ? \Carbon\Carbon::parse($memberLoan->pay_date)->format('m/d/Y') : 'N/A' }}</td>
+                                <td>{{ $memberLoan->pay_date ? \Carbon\Carbon::parse($memberLoan->pay_date)->format('m/d/Y') : 'N/A' }}
+                                </td>
                                 <td>
                                     @if ($memberLoan->status === 'returned')
                                         <span class="badge bg-success">បានសង</span>
                                     @endif
                                 </td>
-                                <td class="action-column"><button class="remove-btn" onclick="removeRow(this)">×</button></td>
+                                <td class="action-column"><button class="remove-btn" onclick="removeRow(this)">×</button>
+                                </td>
                             </tr>
                         @empty
                             <tr>

@@ -51,9 +51,9 @@ class LoanBook extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function subject()
+    public function genre()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->belongsTo(Genre::class);
     }
 
 

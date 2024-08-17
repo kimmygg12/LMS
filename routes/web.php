@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\MemberAuthController;
-use App\Http\Controllers\BookReservationController;
+use App\Http\Controllers\GenreController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthorController;
@@ -9,15 +9,16 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HomeStudentController;
 use App\Http\Controllers\LoanBookController;
 use App\Http\Controllers\LoanBookHistoryController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\StudentBookController;
 use App\Http\Controllers\StudyController;
-use App\Http\Controllers\SubjectController;
+
 use App\Models\Author;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,7 +50,6 @@ Route::get('/', function () {
 //     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 // });
 
-Route::get('/home-student', [BookController::class, 'homeStudent'])->name('home.student');
 Route::get('/search-books', [BookController::class, 'searchBooks'])->name('search.books');
 
 
@@ -58,14 +58,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    // Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::resource('books', BookController::class);
     Route::post('authors', function (Request $request) {
         $author = Author::create($request->all());
         return response()->json($author);
     })->name('authors.store');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::get('/overdue-books-report', [LoanBookController::class, 'overdueBooksReport'])->name('loans.overdueBooksReport');
     Route::get('/books/search', [BookController::class, 'search'])->name('books.search');
     Route::get('/loans/top-borrowed-books', [LoanBookController::class, 'topBorrowedBooksReport'])->name('loans.topBorrowedBooksReport');
@@ -81,7 +82,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/authors', [AuthorController::class, 'index'])->name('authors.index');
     Route::post('/authors', [AuthorController::class, 'store'])->name('authors.store');
-    Route::resource('subjects', SubjectController::class);
     Route::resource('studies', StudyController::class);
     Route::get('loans', [LoanBookController::class, 'index'])->name('loans.index');
     Route::get('/loans/{id}/edit', [LoanBookController::class, 'edit'])->name('loans.edit');
@@ -89,11 +89,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('loans/create', [LoanBookController::class, 'create'])->name('loans.create');
     Route::post('loans', [LoanBookController::class, 'store'])->name('loans.store');
-    Route::resource('loans', LoanBookController::class);
+
     Route::resource('loans', LoanBookController::class);
     Route::resource('members', MemberController::class);
-    Route::get('/dashboard/payments', [DashboardController::class, 'Payments'])->name('dashboard.Payments');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('categories', CategoryController::class);
+    Route::resource('authors', AuthorController::class);
+    Route::resource('genres', GenreController::class);
+
     Route::get('loans/reports/tab', [LoanBookController::class, 'indexReport'])->name('loans.reports');
     Route::get('loans/report/total', [LoanBookController::class, 'reportTotalLoan'])->name('loans.report.total');
     Route::get('/loans', [LoanBookController::class, 'index'])->name('loans.index');
@@ -106,12 +108,9 @@ Route::middleware('auth')->group(function () {
     Route::get('borrow/{id}/renew', [LoanBookController::class, 'showRenewForm'])->name('loans.renew.form');
     Route::put('borrow/{id}/renew', [LoanBookController::class, 'renew'])->name('loans.renew');
 
-    Route::resource('categories', CategoryController::class);
-    Route::resource('loans', LoanBookController::class);
-
     Route::put('/borrow/{id}/finebook', [LoanBookController::class, 'fineBook'])->name('loans.finebook');
     Route::get('/borrow/{id}/finebook', [LoanBookController::class, 'showFinebookForm'])->name('loans.finebook.form');
-    Route::resource('authors', AuthorController::class);
+
     Route::get('/loanBookHistories', [LoanBookHistoryController::class, 'index'])->name('loanBookHistories.index');
     Route::get('/loanBookHistories/{id}', [LoanBookHistoryController::class, 'show'])->name('loanBookHistories.show');
     Route::get('/loanBookHistories/{id}/print', [LoanBookHistoryController::class, 'print'])->name('loanBookHistories.print');
@@ -159,36 +158,52 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::get('/member/register', [MemberAuthController::class, 'showRegisterForm'])
-    ->name('member.register');
-Route::post('/member/register', [MemberAuthController::class, 'register']);
+Route::middleware(['web'])->group(function () {
+    // Login routes
+    Route::get('/student/login', [MemberAuthController::class, 'showLoginForm'])
+        ->name('member.login');
+    Route::post('/student/login', [MemberAuthController::class, 'login']);
+    Route::post('/student/logout', [MemberAuthController::class, 'logout'])
+        ->name('member.logout');
 
-Route::get('/member/login', [MemberAuthController::class, 'showLoginForm'])
-    ->name('member.login');
-Route::post('/member/login', [MemberAuthController::class, 'login']);
-Route::post('/member/logout', [MemberAuthController::class, 'logout'])
-    ->name('member.logout');
-Route::get('/member/dashboard', [HomeController::class, 'index'])
-    ->name('member.dashboard')
-    ->middleware('auth:member');
-Route::get('/member/{id}', [MemberController::class, 'showmember'])
-    ->name('members.showmember')
-    ->middleware('auth:member');
+    Route::get('/student/register', [MemberAuthController::class, 'showRegisterForm'])
+        ->name('member.register');
+    Route::post('/student/register', [MemberAuthController::class, 'register']);
+});
+
+
 Route::middleware('auth:member')->group(function () {
-    Route::get('/members/{id}/loans', [MemberController::class, 'showLoans'])->name('members.showLoans');
+
+    Route::get('/studentbook/dashboard', [StudentBookController::class, 'dashboard'])->name('students.dashboard');
+    Route::get('/studentbook/{id}/book', [StudentBookController::class, 'show'])->name('students.book-student');
+    Route::get('/studentbook/{id}', [StudentBookController::class, 'show'])->name('student.book-student');
+    Route::get('/studentbook/{id}/student', [StudentBookController::class, 'showmember'])->name('students.show-student');
+    Route::get('/studentbook/{id}/borrow', [StudentBookController::class, 'showLoans'])->name('students.borrow-student');
+
+    Route::post('/reserve/students', [ReservationController::class, 'reserve'])->name('reservations.reserve');
+
+    Route::resource('student/books', BookController::class);
+    Route::resource('student/members', MemberController::class);
+    Route::resource('student/loans', LoanBookController::class);
+    Route::resource('student/categories', CategoryController::class);
+    Route::resource('student/authors', AuthorController::class);
+    Route::resource('student/genres', GenreController::class);
+
+    Route::post('/loans/{loan}/approve', [LoanBookController::class, 'approve'])->name('loans.approve');
+    Route::get('/loans/{loan}/approve', [LoanBookController::class, 'showApproveForm'])->name('loans.approve.form');
+
+    Route::get('/student/reserved-books', [ReservationController::class, 'showReservedBooks'])->name('reservations.show');
+    Route::post('/loans/reject/{id}', [LoanBookController::class, 'rejectReservation'])->name('loans.reject');
+    Route::post('/loans/{id}/reapprove', [LoanBookController::class, 'reApproveReservation'])->name('loans.reApprove');
+
+    Route::get('locale/{locale}', [LocaleController::class, 'set'])->name('locale.set');
 
 });
-Route::get('/member/dashboard', [MemberController::class, 'dashboard'])->name('members.dashboard');
-Route::get('/members/bookss/{id}', [MemberController::class, 'showBook'])->name('members.books.show');
-Route::get('/members/books/{id}', [MemberController::class, 'showBookDetails'])->name('members.books.details');
-Route::post('/reservations/reserve', [ReservationController::class, 'reserve'])->name('reservations.reserve');
-Route::post('/loans/{loan}/approve', [LoanBookController::class, 'approve'])->name('loans.approve');
-Route::get('/loans/{loan}/approve', [LoanBookController::class, 'showApproveForm'])->name('loans.approve.form');
 
-Route::get('/members/reserved-books', [ReservationController::class, 'showReservedBooks'])->name('reservations.show');
-Route::post('/loans/reject/{id}', [LoanBookController::class, 'rejectReservation'])->name('loans.reject');
-Route::post('/loans/{id}/reapprove', [LoanBookController::class, 'reApproveReservation'])->name('loans.reApprove');
-Route::get('/members/student-book/{book}', [BookController::class, 'showBook'])->name('members.student-book');
+Route::get('locale/{locale}', [LocaleController::class, 'set'])->name('locale.set');
+Route::get('/home-student', [HomeStudentController::class, 'homeStudent'])->name('student.home');
 
+Route::get('/homestudent/search', [HomeStudentController::class, 'homeStudent'])->name('homestudents.books.search');
+Route::get('/homestudent/{id}', [HomeStudentController::class, 'show'])->name('homestudents.home-showbook');
 
 require __DIR__ . '/auth.php';

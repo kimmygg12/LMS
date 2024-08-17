@@ -12,38 +12,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 class MemberController extends Controller
 {
-    public function dashboard(Request $request)
-{
-    // Get the search query from the request
-    $search = $request->input('search');
-    
-    // Define the number of books to display per page
-    $perPage = 5;
-
-    // If there is a search query, filter the books based on title, ISBN, or author's name
-    if ($search) {
-        $books = Book::where('title', 'LIKE', "%{$search}%")
-                     ->orWhere('isbn', 'LIKE', "%{$search}%")
-                     ->orWhereHas('author', function($query) use ($search) {
-                         $query->where('name', 'LIKE', "%{$search}%");
-                     })
-                     ->paginate($perPage);
-    } else {
-        // If there's no search query, retrieve all books with pagination
-        $books = Book::paginate($perPage);
-    }
-
-    // Return the view with paginated books
-    return view('members.dashboard', compact('books'));
-}
-
-
-    // Method to show the details of a specific book
-    public function showBook($id)
-    {
-        $book = Book::with('author')->findOrFail($id);
-        return view('members.details', compact('book'));
-    }
     public function showReservedBooks($id)
     {
         // Ensure that only authenticated members can view their own reserved books
@@ -134,28 +102,6 @@ class MemberController extends Controller
             'image' => $member->image ? asset($member->image) : null,
         ]);
     }
-    public function showmember($id)
-    {
-        // Ensure that only authenticated members can view their own details
-        if (Auth::guard('member')->check()) {
-            $member = Member::findOrFail($id);
-            return view('members.show', compact('member'));
-        }
-
-        return redirect()->route('members.login');
-    }
-    public function showLoans($id)
-    {
-        // Ensure that only authenticated members can view their own loans
-        if (Auth::guard('member')->check() && Auth::guard('member')->id() == $id) {
-            $member = Member::findOrFail($id);
-            $loans = LoanBook::where('member_id', $id)->with('book')->get();
-
-            return view('members.loans', compact('member', 'loans'));
-        }
-
-        return redirect()->route('members.login');
-    }
     public function edit($id)
     {
         $member = Member::findOrFail($id);
@@ -194,16 +140,6 @@ class MemberController extends Controller
 
         return redirect()->route('members.index');
     }
-    // public function destroy($id)
-    // {
-    //     $member = Member::findOrFail($id);
-    //     if ($member->image && file_exists(public_path($member->image))) {
-    //         unlink(public_path($member->image));
-    //     }
-    //     $member->delete();
-    //     return redirect()->route('members.index');
-    //     // return redirect()->back();
-    // }
     public function destroy($id)
     {
         $member = Member::findOrFail($id);

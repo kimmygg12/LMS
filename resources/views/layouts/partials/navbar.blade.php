@@ -1,7 +1,7 @@
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
     <a class="navbar-brand ps-1 d-flex align-items-center" href="{{ route('dashboard') }}">
-        <img src="{{ asset('images/a1.jpg') }}" alt="University Logo" class="navbar-logo mr-2" />
+        <img src="{{ asset('images/logo.jpg') }}" alt="University Logo" class="navbar-logo mr-2" />
         {{ __('messages.library_management') }}
     </a>
 

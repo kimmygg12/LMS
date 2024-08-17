@@ -64,7 +64,8 @@
                         <div class="form-group mb-3">
                             <label for="isbn">{{ __('books.isbn') }}</label>
                             <div class="input-group">
-                                <span class="input-group-text d-flex align-items-center justify-content-center" style="width: 40px;"><i class="fa-solid fa-code"></i></span>
+                                <span class="input-group-text d-flex align-items-center justify-content-center"
+                                    style="width: 40px;"><i class="fa-solid fa-code"></i></span>
                                 <input type="text" class="form-control" name="isbn" id="isbn"
                                     value="{{ old('isbn', $book->isbn) }}">
                             </div>
@@ -130,15 +131,16 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="subject_id">{{ __('books.subject') }}</label>
+                            <label for="genre_id">{{ __('books.genre') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text d-flex align-items-center justify-content-center"
-                                style="width: 40px;"><i class="fa-sharp fa-light fa-layer-group"></i></span>
-                                <select class="form-control" id="subject_id" name="subject_id">
-                                    <option value="">{{ __('books.select_subject') }}</option>
-                                    @foreach ($subjects as $subject)
-                                        <option value="{{ $subject->id }}" {{ $subject->id == $book->subject_id ? 'selected' : '' }}>
-                                            {{ $subject->name }}
+                                    style="width: 40px;"><i class="fa-sharp fa-light fa-layer-group"></i></span>
+                                <select class="form-control" id="genre_id" name="genre_id">
+                                    <option value="">{{ __('books.select_genre') }}</option>
+                                    @foreach ($genres as $genre)
+                                        <option value="{{ $genre->id }}"
+                                            {{ $genre->id == $book->genre_id ? 'selected' : '' }}>
+                                            {{ $genre->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -153,7 +155,7 @@
                         <textarea class="form-control" name="description" id="description">{{ old('description', $book->description) }}</textarea>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">{{ __('books.save') }}</button>
+                <button type="submit" class="btn btn-success">{{ __('books.save') }}</button>
             </form>
         </div>
     </div>
@@ -174,7 +176,8 @@
                             <input type="text" class="form-control" id="authorName" name="name" required>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" id="saveAuthorBtn">{{ __('books.save') }}</button>
+                            <button type="submit" class="btn btn-success"
+                                id="saveAuthorBtn">{{ __('books.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -188,9 +191,9 @@
             $('#author_id').select2({
                 theme: 'bootstrap-5'
             });
-            $('#subject_id').select2({
-                    theme: 'bootstrap-5'
-                });
+            $('#genre_id').select2({
+                theme: 'bootstrap-5'
+            });
         });
 
         document.getElementById('addAuthorForm').addEventListener('submit', function(e) {
