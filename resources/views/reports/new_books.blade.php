@@ -44,7 +44,15 @@
                         <td>{{ $book->isbn }}</td>
                         <td>{{ $book->title }}</td>
                         <td>{{ $book->genre ? $book->genre->name : 'N/A' }}</td>
-                        <td>{{ $book->author->name }}</td>
+                        <td>
+                            @if($book->authors->isNotEmpty())
+                                @foreach($book->authors as $author)
+                                    {{ $author->name }}@if(!$loop->last), @endif
+                                @endforeach
+                            @else
+                                N/A
+                            @endif
+                        </td>
                         <td>{{ $book->publication_date }}</td>
                         <td>{{ $book->quantity }} {{ __('messages.Total') }}</td>
                         <td>{{ $book->created_at->format('Y-m-d H:i:s') }}</td> <!-- Display Created Date -->

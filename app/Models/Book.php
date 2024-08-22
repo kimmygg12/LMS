@@ -54,15 +54,11 @@ class Book extends Model
 
 
     protected $dates = ['deleted_at'];
-    public function author()
+    public function authors()
     {
-        return $this->belongsTo(Author::class);
+        return $this->belongsToMany(Author::class, 'author_book', 'book_id', 'author_id');
     }
-
-    public function book()
-    {
-        return $this->belongsTo(Book::class);
-    }
+    
     public function history()
     {
         return $this->hasMany(LoanBookHistory::class);

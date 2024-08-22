@@ -30,8 +30,17 @@
 
                         <p class="card-text">
                             <strong>{{ __('books.author') }}:</strong>
-                            {{ $book->author ? $book->author->name : __('books.no_author') }}
+                            @if ($book->authors->isNotEmpty())
+                                @foreach ($book->authors as $author)
+                                    {{ $author->name }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            @else
+                                {{ __('books.no_author') }}
+                            @endif
                         </p>
+
 
                         <p class="card-text">
                             <strong>{{ __('books.genre') }}:</strong>
@@ -48,8 +57,8 @@
                                 <span class="badge bg-success">{{ __('books.status_available') }}</span>
                             @elseif ($book->status === 'borrowed')
                                 <span class="badge bg-warning text-dark">{{ __('books.status_borrowed') }}</span>
-                            @elseif ($book->status === 'overdue')
-                                <span class="badge bg-secondary">{{ __('books.status_overdue') }}</span>
+                            @elseif($book->status == 'unavailable')
+                                <span class="badge bg-danger">{{ __('messages.Unavailable') }}</span>
                             @elseif ($book->status === 'reserved')
                                 <span class="badge bg-info text-dark">{{ __('books.status_reserved') }}</span>
                             @elseif($book->status === 'rejected')
@@ -61,6 +70,7 @@
                         <form id="reservation-form" action="{{ route('reservations.reserve') }}" method="POST">
                             @csrf
                             <input type="hidden" name="book_id" value="{{ $book->id }}">
+                            {{-- <input type="hidden" name="member_id" value="{{ Auth::guard('member')->user()->id }}"> --}}
                             <input type="hidden" name="member_id" value="{{ Auth::guard('member')->user()->id }}">
                             <button type="submit" class="btn btn-success mt-3" id="reserve-button">
                                 <i class="fa-solid fa-cart-shopping"></i> {{ __('books.reserve') }}
@@ -83,7 +93,7 @@
                 form.addEventListener('submit', function(event) {
                     event.preventDefault();
 
-                    if (bookStatus === 'borrowed') {
+                    if (bookStatus === 'unavailable') {
                         Swal.fire({
                             title: '{{ __('books.book_unavailable_title') }}',
                             text: '{{ __('books.book_unavailable_text') }}',

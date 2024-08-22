@@ -43,7 +43,7 @@ return [
     'confirmation_cancelled_text' => 'ការកក់របស់អ្នកមិនទាន់បានដំណើរការទេ។',
     'confirmation_ok' => 'OK',
     'book_unavailable_title' => 'សៀវភៅមិនមាន ឬ​មិនទំនេ',
-    'book_unavailable_text' => 'សៀវភៅនេះកំពុងត្រូវបានអស់ ហើយមិនអាចរកក់ទុកបានទេ។',
+    'book_unavailable_text' => 'សៀវភៅនេះ មិនអាចរកក់ទុកបានទេ។',
     'status_available' => 'ទំនេ',
     'status_reserved' => 'បានកក់',
     'status_borrowed' => 'មិនមាន',

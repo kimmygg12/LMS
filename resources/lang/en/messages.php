@@ -214,7 +214,12 @@ return [
     'edit_genre' => 'Edit Genre',
     'genres' => 'Genres',
     'not_available' => 'Not available',
+    'success' => 'Success!',
+    'Unavailable' => 'Unavailable',
+    'error' => 'Error!',
+    'current_loans' => 'Current Loans',
+    'loan_renew' => 'Renew Date',
 
 
-    
+    'status_returned' => 'Returned',
 ];

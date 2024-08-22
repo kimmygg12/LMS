@@ -150,5 +150,6 @@
             $(this).closest('tr').remove();
         });
     });
+    
 </script>
 @endsection

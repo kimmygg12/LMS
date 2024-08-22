@@ -25,7 +25,15 @@
                 <img src="{{ asset($book->cover_image) }}" class="card-img-top" alt="{{ $book->title }}" style="height: 250px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ $book->title }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ $book->author->name }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        @if($book->authors->isNotEmpty())
+                            @foreach($book->authors as $author)
+                                {{ $author->name }}@if(!$loop->last), @endif
+                            @endforeach
+                        @else
+                            {{ __('messages.n_a') }}
+                        @endif
+                    </h6>
                 </div>
                 <div class="card-footer text-muted">
                     <a href="{{ route('students.book-student', $book->id) }}"

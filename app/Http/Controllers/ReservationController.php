@@ -36,7 +36,7 @@ class ReservationController extends Controller
             'invoice_number' => $reservationNumber,
             'status' => 'reserved',
         ]);
-        return redirect()->back()->with('success', 'Your reservation has been successful.');
+        return redirect()->back();
         // return redirect()->route('members.dashboard')->with('success', 'Book reserved successfully.');
     }
     public function showReservedBooks()
@@ -51,7 +51,7 @@ class ReservationController extends Controller
     }
     private function generateReservationNumber()
     {
-        $randomNumber = rand(10000, 99999);
+        $randomNumber = rand(100000, 999999);
         return 'INV-' . $randomNumber;
     }
 

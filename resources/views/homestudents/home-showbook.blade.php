@@ -19,7 +19,19 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title">{{ __('messages.book_title') }}: {{ $book->title }}</h5>
-                        <p class="card-text"><strong>{{ __('messages.author') }}:</strong> {{ $book->author->name }}</p>
+                        <p class="card-text">
+                            <strong>{{ __('messages.author') }}:</strong>
+                            @if ($book->authors->isNotEmpty())
+                                @foreach ($book->authors as $author)
+                                    {{ $author->name }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            @else
+                                {{ __('messages.n_a') }}
+                            @endif
+                        </p>
+
                         <p class="card-text"><strong>{{ __('messages.isbn') }}:</strong> {{ $book->isbn }}</p>
                         <p class="card-text">
                             <strong>{{ __('messages.genre') }}:</strong>

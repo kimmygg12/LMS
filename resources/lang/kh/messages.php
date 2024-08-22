@@ -4,7 +4,7 @@ return [
 
     'library_name' => 'ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ',
     'library_title' => 'គ្រប់គ្រងសៀវភៅក្នុងបណ្ណាល័យ',
-
+    'Unavailable' => 'មិនមាន',
     'home' => 'ទំព័រដើម',
     'books' => 'សៀវភៅ',
     'book_list' => 'បញ្ជីសៀវភៅ',
@@ -51,7 +51,7 @@ return [
     'reject' => 'Reject',
     'status_overdue' => 'លើសកំណត់',
     'status_rejected' => 'បដិសេធ',
-
+    'delete' => 'លុបចេញ',
     'member' => 'សមាជិក',
     'loan_date' => 'ថ្ងៃខ្ចី',
     'due_date' => 'ថ្ងៃកំណត់សង',
@@ -117,14 +117,15 @@ return [
     'edit_category' => 'កែជំនាញ',
     'update_category' => 'Update',
     'borrow_book' => 'ខ្ចីសៀវភៅ',
-
+    'success' => 'ជោគជ័យ!',
+    'error' => 'មានកំហុស!',
 
     'return_date' => 'ថ្ងៃសង',
     'fineBook' => 'ផាកពិន័យ',
     'reason' => 'មូលហេតុ',
     'information' => 'ព័ត៌មាន',
     'loan_history' => 'សៀវភៅដែលបានសង',
-
+    'current_loans' => 'សៀវភៅដែលខ្ចី',
     'report' => 'របាយការណ៍',
     'start_date' => 'ចាប់ពីថ្ងៃ​:',
     'end_date' => 'ថ្ងៃកំណត់:',
@@ -206,7 +207,8 @@ return [
     'edit_genre' => 'កែប្រែប្រភេទ',
     'genres' => 'ប្រភេទ',
     'not_available' => 'មិនមាន',
-
+    'loan_renew' => 'ខ្ចីបន្តដល់ថ្ងៃ',
+    'status_returned' => 'បានសង',
 
 
  

@@ -46,9 +46,13 @@ class LoanBookController extends Controller
     }
     public function show($id)
     {
-        $loan = LoanBook::with(['book', 'member', 'member.study', 'member.category'])
+        // Fetch the loan with related models
+        $loan = LoanBook::with(['book', 'member', 'member.study', 'member.category', 'book.authors', 'book.genre'])
             ->findOrFail($id);
-
+    
+        // Collect all authors' names into a comma-separated string
+        $authorNames = $loan->book->authors->pluck('name')->implode(', ') ?? 'Unknown Author';
+    
         return response()->json([
             'invoice_number' => $loan->invoice_number,
             'book_title' => $loan->book->title,
@@ -67,10 +71,11 @@ class LoanBookController extends Controller
             'phone' => $loan->member->phone,
             'study_name' => $loan->member->study->name,
             'category_name' => $loan->member->category->name,
-            'author' => $loan->book->author->name,
+            'author' => $authorNames,
             'genre' => $loan->book->genre->name,
         ]);
     }
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -271,11 +276,11 @@ class LoanBookController extends Controller
         }
 
         if (!$request->filled('renew_date') && !$request->filled('pay_date')) {
-            return redirect()->back()->with('error', 'Please fill in both renew date and pay date.')->withInput();
+            return redirect()->back()->with('error', 'Please fill in both renew date and pay date.');
         } elseif (!$request->filled('renew_date')) {
-            return redirect()->back()->with('error', 'Please fill in the renew date.')->withInput();
+            return redirect()->back()->with('error', 'Please fill in the renew date.');
         } elseif (!$request->filled('pay_date')) {
-            return redirect()->back()->with('error', 'Please fill in the pay date.')->withInput();
+            return redirect()->back()->with('error', 'Please fill in the pay date.');
         }
     }
 

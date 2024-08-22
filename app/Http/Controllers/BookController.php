@@ -8,6 +8,8 @@ use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 class BookController extends Controller
 {
    
@@ -24,38 +26,41 @@ class BookController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        
         $books = Book::where('title', 'LIKE', "%$query%")
-            ->orWhere('author', 'LIKE', "%$query%")
             ->orWhere('isbn', 'LIKE', "%$query%")
+            ->orWhereHas('authors', function ($q) use ($query) {
+                $q->where('name', 'LIKE', "%$query%");
+            })
             ->paginate(10);
-
+    
         return view('books.index', compact('books'))->render();
     }
+    
     public function index(Request $request)
     {
         $search = $request->input('search');
         $query = Book::query();
-
+    
         if ($search) {
             $query->where('title', 'like', "%{$search}%")
                 ->orWhere('isbn', 'like', "%{$search}%")
-                ->orWhereHas('author', function ($q) use ($search) {
+                ->orWhereHas('authors', function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                 });
         }
-
-        // Fetch books ordered by created_at in descending order
-        $books = $query->with('author', 'genre')
+    
+        $books = $query->with('authors', 'genre')
             ->orderBy('created_at', 'desc')
             ->paginate(3);
-
+    
         // Get the most recently created book
         $newBooks = Book::orderBy('created_at', 'desc')->limit(1)->get();
-
+    
         return view('books.index', compact('books', 'newBooks', 'search'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
-
+    
 
     public function create()
     {
@@ -64,57 +69,85 @@ class BookController extends Controller
 
         return view('books.create', compact('authors', 'genres'));
     }
-
     public function store(Request $request)
     {
-        $request->validate([
+        // Validation rules
+        $validation = $request->validate([
             'title' => 'required|string|max:255',
-            'author_id' => 'required|exists:authors,id',
-            'isbn' => 'nullable|string|max:200',
+            'author_id' => 'required|array',
+            'author_id.*' => 'exists:authors,id',
+            'isbn' => 'nullable|string|max:200|unique:books,isbn,' . ($request->input('id') ?? 'NULL'),
             'publication_date' => 'nullable|date',
             'description' => 'nullable|string',
             'genre_id' => 'nullable|integer|exists:genres,id',
             'status' => 'nullable|in:available,borrowed,reserved',
-            'quantity' => 'required|integer|min:1', // Add quantity validation
+            'quantity' => 'required|integer|min:0',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
+    
+        DB::beginTransaction();
+    
         try {
-            // Create new book instance
-            $book = new Book();
-            $book->title = $request->title;
-            $book->author_id = $request->author_id;
-            $book->isbn = $request->isbn;
-            $book->publication_date = $request->publication_date;
-            $book->description = $request->description;
-            $book->quantity = $request->quantity; // Set quantity
-            $book->genre_id = $request->genre_id;
-
-            // Handle cover image upload
-            if ($request->hasFile('cover_image')) {
-                $image = $request->file('cover_image');
-                $imageName = time() . '.' . $image->extension();
-                $image->move(public_path('covers'), $imageName);
-                $book->cover_image = 'covers/' . $imageName;
-
+            $bookId = $request->input('id');
+            $status = $request->input('quantity') < 1 ? 'unavailable' : $request->input('status', 'available');
+            if ($bookId) {
+                // Update existing book
+                $book = Book::findOrFail($bookId);
+                $book->title = $request->title;
+                $book->isbn = $request->isbn;
+                $book->publication_date = $request->publication_date;
+                $book->description = $request->description;
+                $book->quantity = $request->quantity;
+                $book->genre_id = $request->genre_id;
+    
+                if ($request->hasFile('cover_image')) {
+                    $image = $request->file('cover_image');
+                    $imageName = time() . '.' . $image->extension();
+                    $image->move(public_path('covers'), $imageName);
+                    $book->cover_image = 'covers/' . $imageName;
+                }
+            
+                $book->save();
+                $book->authors()->sync($request->author_id);
+            } else {
+                // Create new book
+                $book = new Book();
+                $book->title = $request->title;
+                $book->isbn = $request->isbn;
+                $book->publication_date = $request->publication_date;
+                $book->description = $request->description;
+                $book->quantity = $request->quantity;
+                $book->genre_id = $request->genre_id;
+                $book->status = $status;
+    
+                if ($request->hasFile('cover_image')) {
+                    $image = $request->file('cover_image');
+                    $imageName = time() . '.' . $image->extension();
+                    $image->move(public_path('covers'), $imageName);
+                    $book->cover_image = 'covers/' . $imageName;
+                }
+    
+                $book->save();
+                $book->authors()->attach($request->author_id);
             }
-
-            // Save book
-            $book->save();
-
-            // Redirect with success message
-            return redirect()->route('books.index');
-
+    
+            DB::commit();
+            return redirect()->route('books.index')->with('success', 'Book added successfully.');
         } catch (\Illuminate\Database\QueryException $e) {
-            // Handle duplicate entry
-            if ($e->getCode() == '23000') { // Duplicate entry code
+            DB::rollBack();
+            if ($e->getCode() == '23000') { // Unique constraint violation
                 return redirect()->back()->with('error', 'The ISBN has already been taken.')->withInput();
+            } else {
+                return redirect()->back()->with('error', 'An error occurred while saving the book.')->withInput();
             }
-
-            // Handle other exceptions
+        } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'An error occurred while saving the book.')->withInput();
         }
     }
+    
+    
+    
 
     public function show(Book $book)
     {
@@ -131,48 +164,104 @@ class BookController extends Controller
     }
 
 
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'title' => 'required|string|max:255',
+    //         'author_id' => 'required|exists:authors,id',
+    //         'isbn' => 'required|string|unique:books,isbn,' . $id,
+    //         'publication_date' => 'required|date',
+    //         'description' => 'nullable|string',
+    //         'genre_id' => 'nullable|integer|exists:genres,id',
+    //         'status' => 'required|string',
+    //         'quantity' => 'required|integer|min:1', // Add quantity validation
+    //         'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //     ]);
+
+    //     $book = Book::findOrFail($id);
+    //     $book->title = $request->title;
+    //     $book->author_id = $request->author_id;
+    //     $book->isbn = $request->isbn;
+    //     $book->publication_date = $request->publication_date;
+    //     $book->description = $request->description;
+    //     $book->status = $request->status;
+    //     $book->genre_id = $request->genre_id;
+    //     $book->quantity = $request->quantity; // Update quantity
+
+
+    //     if ($request->hasFile('cover_image')) {
+    //         // Delete old cover image
+    //         if ($book->cover_image) {
+    //             Storage::disk('public')->delete($book->cover_image);
+    //         }
+    //         $image = $request->file('cover_image');
+    //         $imageName = time() . '.' . $image->extension();
+    //         $image->move(public_path('covers'), $imageName);
+    //         $book->cover_image = 'covers/' . $imageName;
+    //     }
+
+    //     $book->save();
+
+
+    //     return redirect()->route('books.index');
+    // }
     public function update(Request $request, $id)
     {
-        $request->validate([
+        // Validation rules
+        $validation = $request->validate([
             'title' => 'required|string|max:255',
-            'author_id' => 'required|exists:authors,id',
-            'isbn' => 'required|string|unique:books,isbn,' . $id,
-            'publication_date' => 'required|date',
+            'author_id' => 'required|array',
+            'author_id.*' => 'exists:authors,id',
+            'isbn' => 'nullable|string|max:200|unique:books,isbn,' . $id,
+            'publication_date' => 'nullable|date',
             'description' => 'nullable|string',
             'genre_id' => 'nullable|integer|exists:genres,id',
-            'status' => 'required|string',
-            'quantity' => 'required|integer|min:1', // Add quantity validation
+            'status' => 'nullable|in:available,borrowed,reserved',
+            'quantity' => 'required|integer|min:0',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
-        $book = Book::findOrFail($id);
-        $book->title = $request->title;
-        $book->author_id = $request->author_id;
-        $book->isbn = $request->isbn;
-        $book->publication_date = $request->publication_date;
-        $book->description = $request->description;
-        $book->status = $request->status;
-        $book->genre_id = $request->genre_id;
-        $book->quantity = $request->quantity; // Update quantity
-
-
-        if ($request->hasFile('cover_image')) {
-            // Delete old cover image
-            if ($book->cover_image) {
-                Storage::disk('public')->delete($book->cover_image);
+    
+        DB::beginTransaction();
+    
+        try {
+            $book = Book::findOrFail($id);
+            $book->title = $request->title;
+            $book->isbn = $request->isbn;
+            $book->publication_date = $request->publication_date;
+            $book->description = $request->description;
+            $book->quantity = $request->quantity;
+            $book->genre_id = $request->genre_id;
+            if ($request->quantity < 1) {
+                $book->status = 'unavailable';
+            } else {
+                $book->status = $request->status;
             }
-            $image = $request->file('cover_image');
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('covers'), $imageName);
-            $book->cover_image = 'covers/' . $imageName;
+            if ($request->hasFile('cover_image')) {
+                $image = $request->file('cover_image');
+                $imageName = time() . '.' . $image->extension();
+                $image->move(public_path('covers'), $imageName);
+                $book->cover_image = 'covers/' . $imageName;
+            }
+    
+            $book->save();
+            $book->authors()->sync($request->author_id);
+    
+            DB::commit();
+            return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
+            if ($e->getCode() == '23000') { // Unique constraint violation
+                return redirect()->back()->with('error', 'The ISBN has already been taken.')->withInput();
+            } else {
+                return redirect()->back()->with('error', 'An error occurred while updating the book.')->withInput();
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'An error occurred while updating the book.')->withInput();
         }
-
-        $book->save();
-
-
-        return redirect()->route('books.index');
     }
-
+    
+    
     public function destroy($id)
     {
         $book = Book::findOrFail($id);

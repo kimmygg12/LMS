@@ -1,7 +1,35 @@
 @extends('layouts.app')
 
 @section('content')
-
+<style>
+    .select2-container {
+        width: calc(100% - 40px);
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        white-space: normal;
+        text-align: center;
+    }
+    .select2-container--default .select2-selection--multiple {
+        width: 100% !important;
+        min-height: 38px;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered .select2-selection__choice .select2-selection__choice__remove {
+        position: relative;
+        margin-left: 5px;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        white-space: normal;
+        text-align: left;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered .select2-selection__placeholder {
+        text-align: center;
+    }
+    @media (max-width: 768px) {
+        .custom-select2-width {
+            width: 100%;
+        }
+    }
+</style>
     <div class="card mt-3">
         <div class="card-header">
             <h1>{{ __('books.edit_book') }}</h1>
@@ -35,28 +63,32 @@
 
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="author_id" class="form-label">{{ __('books.author') }}</label>
+                            <label for="author_id" class="form-label">{{ __('books.authors') }}</label>
                             <div class="input-group">
-                                <span class="input-group-text" style="width: 40px;"><i
-                                        class="fa-solid fa-user-pen"></i></span>
-                                <select class="form-control" id="author_id" name="author_id" required>
-                                    <option value="">{{ __('books.select_author') }}</option>
+                                <span class="input-group-text"
+                                style="width: 40px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-user-pen" id="btn-search-authors" data-bs-toggle="modal"
+                                    data-bs-target="#addAuthorModal"></i>
+                            </span>
+
+                                <select name="author_id[]" id="author_id" multiple class="form-select"
+                                class="form-select select2 custom-select2-width">
                                     @foreach ($authors as $author)
                                         <option value="{{ $author->id }}"
-                                            {{ old('author_id', $book->author_id ?? '') == $author->id ? 'selected' : '' }}>
+                                            {{ in_array($author->id, old('author_id', $book->authors->pluck('id')->toArray())) ? 'selected' : '' }}>
                                             {{ $author->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-outline-secondary" id="btn-search-authors"
-                                        data-bs-toggle="modal" data-bs-target="#addAuthorModal">
-                                        <i class="fa-solid fa-plus"></i>
-                                    </button>
-                                </div>
+                                @error('author_id')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                         </div>
                     </div>
+    
                 </div>
 
                 <div class="row">
@@ -88,7 +120,7 @@
                         <div class="form-group mb-3">
                             <label for="quantity">{{ __('books.quantity') }}</label>
                             <input type="number" id="quantity" name="quantity" class="form-control"
-                                value="{{ old('quantity', $book->quantity) }}" required min="1">
+                                value="{{ old('quantity', $book->quantity) }}" required min="0">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -103,7 +135,7 @@
                                         {{ __('books.available') }}
                                     </option>
                                     <option value="borrowed"
-                                        {{ old('status', $book->status) == 'borrowed' ? 'selected' : '' }}>
+                                        {{ old('status', $book->status) == 'Unavailable' ? 'selected' : '' }}>
                                         {{ __('books.borrowed') }}</option>
                                     {{-- <option value="reserved"
                                         {{ old('status', $book->status) == 'reserved' ? 'selected' : '' }}>
@@ -189,7 +221,16 @@
     <script>
         $(document).ready(function() {
             $('#author_id').select2({
-                theme: 'bootstrap-5'
+                placeholder: "Select authors",
+                width: 'resolve'
+            });
+
+            // Ensure Select2 adjusts on window resize
+            $(window).resize(function() {
+                $('#author_id').select2('destroy').select2({
+                    placeholder: "Select authors",
+                    width: 'resolve'
+                });
             });
             $('#genre_id').select2({
                 theme: 'bootstrap-5'

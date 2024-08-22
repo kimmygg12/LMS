@@ -19,6 +19,7 @@ use App\Http\Controllers\StudentBookController;
 use App\Http\Controllers\StudyController;
 
 use App\Models\Author;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,7 +41,12 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', function () {
-    return view('auth.login');
+    if (Auth::check()) {
+        // Redirect logged-in users to the dashboard
+        return redirect()->route('dashboard');
+    } else {
+        return view('auth.login');
+    }
 });
 
 // Route::get('/dashboard', function () {
@@ -182,18 +188,12 @@ Route::middleware('auth:member')->group(function () {
 
     Route::post('/reserve/students', [ReservationController::class, 'reserve'])->name('reservations.reserve');
 
-    Route::resource('student/books', BookController::class);
-    Route::resource('student/members', MemberController::class);
-    Route::resource('student/loans', LoanBookController::class);
-    Route::resource('student/categories', CategoryController::class);
-    Route::resource('student/authors', AuthorController::class);
-    Route::resource('student/genres', GenreController::class);
-
     Route::post('/loans/{loan}/approve', [LoanBookController::class, 'approve'])->name('loans.approve');
     Route::get('/loans/{loan}/approve', [LoanBookController::class, 'showApproveForm'])->name('loans.approve.form');
 
     Route::get('/student/reserved-books', [ReservationController::class, 'showReservedBooks'])->name('reservations.show');
     Route::post('/loans/reject/{id}', [LoanBookController::class, 'rejectReservation'])->name('loans.reject');
+    
     Route::post('/loans/{id}/reapprove', [LoanBookController::class, 'reApproveReservation'])->name('loans.reApprove');
 
     Route::get('locale/{locale}', [LocaleController::class, 'set'])->name('locale.set');

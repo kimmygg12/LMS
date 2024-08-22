@@ -34,7 +34,7 @@
     <div class="container mt-4">
         <!-- Header with Logo and University Name -->
         <div class="d-flex align-items-center justify-content-center mb-4">
-            <img src="{{ asset('images/a1.jpg') }}" alt="University Logo"
+            <img src="{{ asset('images/logo.jpg') }}" alt="University Logo"
                 style="width: 100px; height: auto; margin-right: 15px;" />
             <div class="text-center">
                 <h1 class="mb-0">ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ</h1>

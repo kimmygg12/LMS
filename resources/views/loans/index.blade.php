@@ -191,6 +191,7 @@
             });
         }
 
+
         const translations = {
             name: "{{ __('messages.name') }}",
             id: "{{ __('messages.id') }}",
@@ -241,56 +242,59 @@
                         const genderText = data.gender === 'male' ? 'Male' : 'Female';
 
                         document.getElementById('loanDetails').innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <!-- Cover Image -->
-                                <div class="col-md-4 mb-3">
-                                   ${data.cover_image ? `<img src="${data.cover_image}" style="width: 120px;" alt="Image" class="img-fluid">` : ''}
-                                </div>
-                                <!-- Loan and Member Details -->
-                                <div class="col-md-4 mb-3">
-                                    <p><strong>${translations.name}:</strong> ${data.member_name} <strong>|</strong> ${data.memberId}</p>
-                                    <p><strong>${translations.gender}:</strong> ${genderText}</p>
-                                    <p><strong>${translations.phone}:</strong> ${data.phone}</p>
-                                    <p><strong>${translations.year}:</strong> ${data.study_name}</p>
-                                    <p><strong>${translations.category}:</strong> ${data.category_name}</p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <p><strong>#${data.invoice_number}</strong></p>
-                                    <p><strong>${translations.loan_date}:</strong> ${data.loan_date}</p>
-                                    <p><strong>${translations.due_date}:</strong> ${data.due_date}</p>
-                                    <p><strong>${translations.renew_date}:</strong> ${data.renew_date || translations.n_a}</p>
-                                    <p><strong>${translations.status}:</strong> ${statusBadge}</p>
-                                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Cover Image -->
+                            <div class="col-md-4 mb-3">
+                               ${data.cover_image ? `<img src="${data.cover_image}" style="width: 120px;" alt="Image" class="img-fluid">` : ''}
                             </div>
-                            <hr>
-                            <!-- Book Details Table -->
-                            <div class="row">
-                                <table class="table table-bordered">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th>${translations.isbn}</th>
-                                            <th>${translations.book_title}</th>
-                                            <th>${translations.author}</th>
-                                            <th>${translations.genre}</th>
-                                            <th>${translations.price}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>${data.isbn}</td>
-                                            <td>${data.book_title}</td>
-                                            <td>${data.author}</td>
-                                            <td>${data.genre}</td>
-                                            <td>${data.price || translations.n_a}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <!-- Loan and Member Details -->
+                            <div class="col-md-4 mb-3">
+                                <p><strong>${translations.name}:</strong> ${data.member_name} <strong>|</strong> ${data.memberId}</p>
+                                <p><strong>${translations.gender}:</strong> ${genderText}</p>
+                                <p><strong>${translations.phone}:</strong> ${data.phone}</p>
+                                <p><strong>${translations.year}:</strong> ${data.study_name}</p>
+                                <p><strong>${translations.category}:</strong> ${data.category_name}</p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <p><strong>#${data.invoice_number}</strong></p>
+                                <p><strong>${translations.loan_date}:</strong> ${data.loan_date}</p>
+                                <p><strong>${translations.due_date}:</strong> ${data.due_date}</p>
+                                <p><strong>${translations.renew_date}:</strong> ${data.renew_date || translations.n_a}</p>
+                                <p><strong>${translations.status}:</strong> ${statusBadge}</p>
                             </div>
                         </div>
+                        <hr>
+                        <!-- Book Details Table -->
+                        <div class="row">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>${translations.isbn}</th>
+                    <th>${translations.book_title}</th>
+                    <th>${translations.author}</th>
+                    <th>${translations.genre}</th>
+                    <th>${translations.price}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${data.isbn}</td>
+                    <td>${data.book_title}</td>
+                    <td>${data.author}</td>
+                    <td>${data.genre}</td>
+                    <td>${data.price || translations.n_a}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
                     </div>
-                `;
+                </div>
+            `;
 
                         document.getElementById('editLoanButton').href = `/loans/${loanId}/edit`;
                         new bootstrap.Modal(document.getElementById('loanModal')).show();

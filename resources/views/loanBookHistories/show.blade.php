@@ -61,7 +61,14 @@
                         <tr>
                             <td>{{ $loanHistory->book ? $loanHistory->book->isbn : 'N/A' }}</td>
                             <td>{{ $loanHistory->book ? $loanHistory->book->title : 'N/A' }}</td>
-                            <td>{{ $loanHistory->book && $loanHistory->book->author->name ? $loanHistory->book->author->name : 'N/A' }}
+                            <td>
+                                @if($loanHistory->book && $loanHistory->book->authors->isNotEmpty())
+                                    {{ $loanHistory->book->authors->pluck('name')->join(', ') }}
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            
                             <td>{{ $loanHistory->book && $loanHistory->book->genre->name ? $loanHistory->book->genre->name : 'N/A' }}
                             </td>
                             </td>

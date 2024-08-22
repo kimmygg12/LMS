@@ -2,6 +2,7 @@
 
 
 @section('content')
+<div class="container">
     <div class="card text-center mb-4">
         <div class="card-body">
             <h4 class="card-title">{{ __('messages.library_title') }}</h4>
@@ -28,7 +29,15 @@
                     style="height: 250px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ $book->title }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ $book->author->name }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        @if($book->authors->isNotEmpty())
+                            @foreach($book->authors as $author)
+                                {{ $author->name }}@if(!$loop->last), @endif
+                            @endforeach
+                        @else
+                            N/A
+                        @endif
+                    </h6>
                 </div>
                 <div class="card-footer text-muted">
                     <a href="{{ route('homestudents.home-showbook', $book->id) }}"
@@ -45,4 +54,5 @@
     <div class="d-flex justify-content-end mt-4">
         {{ $books->links('pagination::bootstrap-5') }}
     </div>
+</div>
 @endsection

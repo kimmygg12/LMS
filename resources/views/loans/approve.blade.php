@@ -70,7 +70,16 @@
                                         <tr>
                                             <td>{{ $loan->book->isbn }}</td>
                                             <td>{{ $loan->book->title }}</td>
-                                            <td>{{ $loan->book->author->name }}</td>
+                                            <td>
+                                                @if($loan->book->authors->isNotEmpty())
+                                                    @foreach($loan->book->authors as $author)
+                                                        {{ $author->name }}@if (!$loop->last), @endif
+                                                    @endforeach
+                                                @else
+                                                    {{ __('books.no_author') }}
+                                                @endif
+                                            </td>
+                                            
                                             <td>{{ $loan->book->genre ? $loan->book->genre->name : 'N/A' }}</td>
                                             <td>
                                                 <input type="text" name="price" id="price" class="form-control">
