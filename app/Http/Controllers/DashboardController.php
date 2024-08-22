@@ -22,8 +22,20 @@ class DashboardController extends Controller
         $totalLoanedBooks = LoanBook::where('status', 'borrowed')
             ->sum('quantity'); // Sum the quantity of loaned books
 
-        $overdueBooks = LoanBook::where('due_date', '<', $currentDate)
-            ->where('status', 'borrowed')
+            $overdueBooks = LoanBook::where('status', 'borrowed')
+            ->where(function ($query) use ($currentDate) {
+                $query->where(function ($query) use ($currentDate) {
+                    // Show if due_date < currentDate and renew_date is null
+                    $query->where('due_date', '<', $currentDate)
+                          ->whereNull('renew_date');
+                })
+                ->orWhere(function ($query) use ($currentDate) {
+                    // Show if due_date < currentDate and renew_date < currentDate
+                    $query->whereNotNull('renew_date')
+                          ->where('due_date', '<', $currentDate)
+                          ->where('renew_date', '<', $currentDate);
+                });
+            })
             ->get();
         $overdueDetails = $overdueBooks->map(function ($loan) {
             $daysOverdue = Carbon::parse($loan->due_date)->diffInDays(Carbon::now());

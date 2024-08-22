@@ -12,10 +12,24 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+    @if (session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let type = '{{ session('success') ? 'success' : 'error' }}';
+                let message = '{{ session('success') ?? session('error') }}';
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: type,
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: type === 'success' ? '#d4edda' : '#f8d7da',
+                    iconColor: type === 'success' ? '#28a745' : '#dc3545'
+                });
+            });
+        </script>
     @endif
 
     <div class="card mb-4">
@@ -91,7 +105,7 @@
                                     <a href="{{ route('members.edit', $member->id) }}" class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-    
+
                                     @if (Auth::check() && Auth::user()->usertype === 'admin')
                                         <!-- Admin-specific delete button -->
                                         <form action="{{ route('members.destroy', $member->id) }}" method="POST"

@@ -3,15 +3,15 @@
 @section('content')
     <div class="container">
         <h1 class="mt-4 mb-4">{{ __('members.year') }}</h1>
-        
+
         <!-- Add New Study Button -->
-        <a href="{{ route('studies.create') }}" class="btn btn-success mb-3">{{__('members.Create_list')}}</a>
+        <a href="{{ route('studies.create') }}" class="btn btn-success mb-3">{{ __('members.Create_list') }}</a>
         <!-- Success Message -->
-        @if (session('success'))
+        {{-- @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
-        @endif
+        @endif --}}
 
         <!-- Table Container -->
         <div class="table-responsive">
@@ -26,18 +26,19 @@
                 <tbody>
                     @foreach ($studies as $study)
                         <tr>
-                            <td>{{ $study->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $study->name }}</td>
                             <td>
                                 <!-- Action Buttons -->
                                 {{-- <a href="{{ route('studies.show', $study->id) }}" class="btn btn-info btn-sm">View</a> --}}
-                                <a href="{{ route('studies.edit', $study->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                
+                                <a href="{{ route('studies.edit', $study->id) }}" class="btn btn-warning btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
+
                                 <!-- Delete Form -->
-                                <form action="{{ route('studies.destroy', $study->id) }}" method="POST" class="d-inline delete-form">
+                                <form action="{{ route('studies.destroy', $study->id) }}" method="POST"
+                                    class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -46,8 +47,24 @@
             </table>
         </div>
     </div>
-@endsection
 
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#d4edda',
+                    iconColor: '#28a745'
+                });
+            });
+        </script>
+    @endif
+@endsection
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -74,16 +91,6 @@
                     });
                 });
             });
-
-            // Display a success alert if the success session is set
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: '{{ session('success') }}',
-                    confirmButtonColor: '#3085d6'
-                });
-            @endif
         });
     </script>
 @endpush

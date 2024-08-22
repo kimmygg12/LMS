@@ -11,10 +11,24 @@
         </div>
     </div>
 
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success mt-2">
-            {{ $message }}
-        </div>
+    @if (session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let type = '{{ session('success') ? 'success' : 'error' }}';
+                let message = '{{ session('success') ?? session('error') }}';
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: type,
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: type === 'success' ? '#d4edda' : '#f8d7da',
+                    iconColor: type === 'success' ? '#28a745' : '#dc3545'
+                });
+            });
+        </script>
     @endif
 
     <div class="card mb-4">

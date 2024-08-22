@@ -12,10 +12,24 @@
         </div>
     </div>
 
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success mt-2">
-            {{ $message }}
-        </div>
+    @if (session('success') || session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let type = '{{ session('success') ? 'success' : 'error' }}';
+                let message = '{{ session('success') ?? session('error') }}';
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: type,
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: type === 'success' ? '#d4edda' : '#f8d7da',
+                    iconColor: type === 'success' ? '#28a745' : '#dc3545'
+                });
+            });
+        </script>
     @endif
 
     <div class="card mb-4">
@@ -81,8 +95,7 @@
                                         <span
                                             class="badge bg-warning text-dark">{{ __('messages.status_borrowed') }}</span>
                                     @elseif($book->status == 'unavailable')
-                                    <span class="badge bg-danger">{{ __('messages.Unavailable') }}</span>
-
+                                        <span class="badge bg-danger">{{ __('messages.Unavailable') }}</span>
                                     @elseif ($book->status === 'reserved')
                                         <span class="badge bg-secondary">{{ __('messages.status_reserved') }}</span>
                                     @endif

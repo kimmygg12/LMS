@@ -85,7 +85,7 @@ class MemberController extends Controller
         }
         $member->save();
 
-        return redirect()->route('members.index');
+        return redirect()->route('members.index')->with('success', __('messages.member_created_successfully'));
         // return redirect()->back()->with('success', 'Member created successfully.');
     }
     public function show($id)
@@ -138,7 +138,7 @@ class MemberController extends Controller
 
         $member->save();
 
-        return redirect()->route('members.index');
+        return redirect()->route('members.index')->with('success', __('messages.member_updated_successfully'));
     }
     public function destroy($id)
     {
@@ -151,9 +151,9 @@ class MemberController extends Controller
             }
             $member->delete();
 
-            return redirect()->route('members.index');
+            return redirect()->route('members.index')->with('success', __('messages.member_deleted_successfully'));
         } else {
-            return redirect()->route('members.index')->with('error', 'You do not have permission to delete this member.');
+            return redirect()->route('members.index')->with('error', __('messages.permission_denied'));
         }
     }
 

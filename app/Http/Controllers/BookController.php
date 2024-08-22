@@ -132,17 +132,17 @@ class BookController extends Controller
             }
     
             DB::commit();
-            return redirect()->route('books.index')->with('success', 'Book added successfully.');
+            return redirect()->route('books.index')->with('success', __('messages.book_added_successfully'));
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             if ($e->getCode() == '23000') { // Unique constraint violation
-                return redirect()->back()->with('error', 'The ISBN has already been taken.')->withInput();
+                return redirect()->back()->with('error', __('messages.isbn_taken'));
             } else {
-                return redirect()->back()->with('error', 'An error occurred while saving the book.')->withInput();
+                return redirect()->back()->with('error', __('messages.error_occurred'));
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'An error occurred while saving the book.')->withInput();
+            return redirect()->back()->with('error', __('messages.error_occurred'));
         }
     }
     
@@ -247,17 +247,17 @@ class BookController extends Controller
             $book->authors()->sync($request->author_id);
     
             DB::commit();
-            return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+            return redirect()->route('books.index')->with('success', __('messages.book_updated_successfully'));
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             if ($e->getCode() == '23000') { // Unique constraint violation
-                return redirect()->back()->with('error', 'The ISBN has already been taken.')->withInput();
+                return redirect()->back()->with('error', __('messages.isbn_taken'));
             } else {
-                return redirect()->back()->with('error', 'An error occurred while updating the book.')->withInput();
+                return redirect()->back()->with('error', __('messages.error_occurred'));
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'An error occurred while updating the book.')->withInput();
+            return redirect()->back()->with('error', __('messages.error_occurred'));
         }
     }
     
@@ -274,9 +274,9 @@ class BookController extends Controller
 
             $book->delete();
 
-            return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+            return redirect()->route('books.index')->with('success', __('messages.book_deleted_successfully'));
         } else {
-            return redirect()->route('books.index')->with('error', 'You do not have permission to delete this book.');
+            return redirect()->route('books.index')->with('error', __('messages.permission_denied'));
         }
     }
 }

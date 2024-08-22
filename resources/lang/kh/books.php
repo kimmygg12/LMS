@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'book_added_successfully' => 'សៀវភៅបានបន្ថែមជោគជ័យ។',
+    'isbn_taken' => 'លេខ ISBN នេះត្រូវបានប្រើ។',
+    'error_occurred' => 'មានកំហុសកើតឡើងខណៈពេលរក្សាទុកសៀវភៅ។',
     'book_list' => 'បញ្ជីសៀវភៅ',
     'add_book' => 'បន្ថែមសៀវភៅ',
     'no_books_found' => 'មិនមានសៀវភៅទេ។',

@@ -44,18 +44,23 @@ class HomeController extends Controller
             $borrowedQuantity = LoanBook::whereNull('returned_at')->sum('quantity');
             $totalLoanedBooks = LoanBook::where('status', 'borrowed')->sum('quantity');
 
-            $overdueBooks = LoanBook::where(function ($query) use ($currentDate) {
-                $query->where(function ($query) use ($currentDate) {
-                    $query->where('due_date', '<', $currentDate)
-                        ->whereNull('renew_date');
-                })
+            // Overdue books
+            $overdueBooks = LoanBook::where('status', 'borrowed')
+                ->where(function ($query) use ($currentDate) {
+                    $query->where(function ($query) use ($currentDate) {
+                        // Show if due_date < currentDate and renew_date is null
+                        $query->where('due_date', '<', $currentDate)
+                              ->whereNull('renew_date');
+                    })
                     ->orWhere(function ($query) use ($currentDate) {
+                        // Show if due_date < currentDate and renew_date < currentDate
                         $query->whereNotNull('renew_date')
-                            ->where('renew_date', '<', $currentDate);
+                              ->where('due_date', '<', $currentDate)
+                              ->where('renew_date', '<', $currentDate);
                     });
-            })
-                ->where('status', 'borrowed')
+                })
                 ->get();
+        
 
             $overdueDetails = $overdueBooks->map(function ($loan) use ($currentDate) {
                 $actualDueDate = $loan->renew_date ?? $loan->due_date;

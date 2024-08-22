@@ -222,4 +222,38 @@ return [
 
 
     'status_returned' => 'Returned',
+    'book_added_successfully' => 'Book added successfully.',
+    'isbn_taken' => 'The ISBN has already been taken.',
+    'error_occurred' => 'An error occurred while saving the book.',
+    'book_updated_successfully' => 'Book updated successfully.',
+    'book_deleted_successfully' => 'Book deleted successfully.',
+
+    'permission_denied' => 'You do not have permission to delete this book.',
+
+    'study_created' => 'Study created successfully.',
+    'study_updated' => 'Study updated successfully.',
+    'study_deleted' => 'Study deleted successfully.',
+
+
+    'member_created_successfully' => 'Member created successfully.',
+    'member_updated_successfully' => 'Member updated successfully.',
+    'member_deleted_successfully' => 'Member deleted successfully.',
+
+
+    'loan_created_successfully' => 'Borrow successfully.',
+
+    'book_not_borrowed' => 'The book is not currently borrowed.',
+    'loan_updated_successfully' => 'Borrow updated successfully.',
+    'loan_renewed_successfully' => 'Borrow renewed successfully.',
+    'loan_paid_successfully' => 'Book repayment successful. ',
+    'fill_both_dates' => 'Please fill in both renew date and pay date.',
+    'fill_renew_date' => 'Please fill in the renew date.',
+    'fill_pay_date' => 'Please fill in the pay date.',
+
+
+    'reservation_not_found_or_processed' => 'Reservation not found or already processed.',
+    'reservation_rejected_successfully' => 'Reservation has been rejected successfully.',
+    'reservation_not_found_or_not_rejected' => 'Reservation not found or not rejected.',
+    'book_not_available_for_reapproval' => 'The book is not available for re-approval.',
+    'reservation_reapproved_successfully' => 'Reservation has been re-approved successfully.',
 ];

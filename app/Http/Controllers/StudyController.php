@@ -23,13 +23,14 @@ class StudyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-
+    
         Study::create([
             'name' => $request->name,
         ]);
-
-        return redirect()->route('studies.index')->with('success', 'Study created successfully.');
+    
+        return redirect()->route('studies.index')->with('success', __('messages.study_created'));
     }
+    
 
     public function show(Study $study)
     {
@@ -51,13 +52,13 @@ class StudyController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('studies.index')->with('success', 'Study updated successfully.');
+        return redirect()->route('studies.index')->with('success', __('messages.study_updated'));
     }
 
     public function destroy(Study $study)
     {
         $study->delete();
 
-        return redirect()->route('studies.index')->with('success', 'Study deleted successfully.');
+        return redirect()->route('studies.index')->with('success', __('messages.study_deleted'));
     }
 }

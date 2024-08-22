@@ -210,6 +210,35 @@ return [
     'loan_renew' => 'ខ្ចីបន្តដល់ថ្ងៃ',
     'status_returned' => 'បានសង',
 
+    'study_created' => 'បានបង្កើតជោគជ័យ។',
+    'study_updated' => 'ជោគជ័យ។',
+    'study_deleted' => 'លុបចោលជោគជ័យ។',
+    'book_added_successfully' => 'សៀវភៅបានបន្ថែមជោគជ័យ។',
+    'isbn_taken' => 'លេខ ISBN នេះត្រូវបានប្រើ។',
+    'error_occurred' => 'មានកំហុសកើតឡើងខណៈពេលរក្សាទុកសៀវភៅ។',
+    'book_updated_successfully' => 'សៀវភៅបានអាប់ដេតជោគជ័យ។',
+    'book_deleted_successfully' => 'សៀវភៅបានលុបចោលជោគជ័យ។',
 
- 
+    'permission_denied' => 'អ្នកមិនមានអាជ្ញាពិចារណាដើម្បីលុបសៀវភៅនេះទេ។',
+
+    'member_created_successfully' => 'សមាជិកបានបន្ថែមជោគជ័យ។',
+    'member_updated_successfully' => 'សមាជិកបានអាប់ដេតជោគជ័យ។',
+    'member_deleted_successfully' => 'សមាជិកបានលុបចោលជោគជ័យ។',
+
+    'loan_created_successfully' => 'ការខ្ចីជោគជ័យ។',
+    'loan_updated_successfully' => 'ការអាប់ដេតជោគជ័យ។',
+    'loan_deleted_successfully' => 'ការលុបបានជោគជ័យ។',
+    'fill_both_dates' => 'សូមបញ្ចូលទាំងថ្ងៃកំណត់ស្នើសុំនិងថ្ងៃបង់ប្រាក់។',
+    'fill_renew_date' => 'សូមបញ្ចូលថ្ងៃកំណត់ស្នើសុំ។',
+    'book_not_borrowed' => 'សៀវភៅមិនទាន់ត្រូវបានកាប់ទេ។',
+
+    'loan_renewed_successfully' => 'ការខ្ចីបន្តបានជោគជ័យ។',
+    'loan_paid_successfully' => 'ការសងសៀវភៅបានជោគជ័យ។',
+  
+
+    'reservation_not_found_or_processed' => 'ការកក់មិនត្រូវបានរកឃើញឬត្រូវបានដំណើរការរួចហើយ។',
+    'reservation_rejected_successfully' => 'ការកក់បានបដិសេធ។',
+    'reservation_not_found_or_not_rejected' => 'ការកក់មិនត្រូវបានរកឃើញឬមិនត្រូវបានបដិសេធទេ។',
+    'book_not_available_for_reapproval' => 'សៀវភៅមិនមានសម្រាប់ការសរសេរឡើងវិញទេ។',
+    'reservation_reapproved_successfully' => 'ការកក់ឡើងវិញជោគជ័យ។',
 ];

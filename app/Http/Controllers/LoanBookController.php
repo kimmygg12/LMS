@@ -109,7 +109,7 @@ class LoanBookController extends Controller
             $book->update(['status' => $book->quantity > 0 ? 'available' : 'borrowed']);
         }
 
-        return redirect()->route('loans.index');
+        return redirect()->route('loans.index')->with('success', __('messages.loan_created_successfully'));
     }
     public function edit($id)
     {
@@ -149,7 +149,7 @@ class LoanBookController extends Controller
             $previousBook->save();
         }
 
-        return redirect()->route('loans.index');
+        return redirect()->route('loans.index')->with('success', __('messages.loan_updated_successfully'));
     }
 
 
@@ -188,7 +188,7 @@ class LoanBookController extends Controller
             // Delete the loan record regardless of its status
             $loan->delete();
 
-            return redirect()->route('loans.index');
+            return redirect()->route('loans.index')->with('success', __('messages.loan_deleted_successfully'));
         } else {
             return redirect()->route('loans.index');
         }
@@ -245,9 +245,9 @@ class LoanBookController extends Controller
                 $book->save();
             }
 
-            return redirect()->route('loanBookHistories.index');
+            return redirect()->route('loans.index')->with('success', __('messages.loan_paid_successfully'));
         } elseif ($request->filled('renew_date')) {
-            return redirect()->route('loans.index');
+            return redirect()->route('loans.index')->with('success', __('messages.loan_renewed_successfully'));
         } elseif ($request->filled('pay_date')) {
             LoanBookHistory::create([
                 'loan_book_id' => $loan->id,
@@ -271,16 +271,15 @@ class LoanBookController extends Controller
                 $book->status = 'available';
                 $book->save();
             }
-
-            return redirect()->route('loanBookHistories.index');
+            return redirect()->route('loans.index')->with('success', __('messages.loan_paid_successfully'));
         }
 
         if (!$request->filled('renew_date') && !$request->filled('pay_date')) {
-            return redirect()->back()->with('error', 'Please fill in both renew date and pay date.');
+            return redirect()->back()->with('error', __('messages.fill_both_dates'));
         } elseif (!$request->filled('renew_date')) {
-            return redirect()->back()->with('error', 'Please fill in the renew date.');
+            return redirect()->back()->with('error', __('messages.fill_renew_date'));
         } elseif (!$request->filled('pay_date')) {
-            return redirect()->back()->with('error', 'Please fill in the pay date.');
+            return redirect()->back()->with('error', __('messages.fill_pay_date'));
         }
     }
 
@@ -529,7 +528,7 @@ class LoanBookController extends Controller
 
         $book->decrement('quantity');
         $book->update(['status' => $book->quantity > 0 ? 'available' : 'borrowed']);
-        return redirect()->route('loans.index');
+        return redirect()->route('loans.index')->with('success', __('messages.loan_created_successfully'));
     }
 
     public function rejectReservation($id)
@@ -548,7 +547,7 @@ class LoanBookController extends Controller
         // $book->increment('quantity');
         // $book->update(['status' => 'available']);
 
-        return redirect()->route('loans.index');
+        return redirect()->route('loans.index')->with('success', __('messages.reservation_rejected_successfully'));
     }
     public function reApproveReservation($id)
     {
@@ -567,7 +566,7 @@ class LoanBookController extends Controller
         $reservation->update(['status' => 'reserved']);
         $book->update(['status' => 'available']);
 
-        return redirect()->route('loans.index');
+        return redirect()->route('loans.index')->with('success', __('messages.reservation_reapproved_successfully'));
     }
 
 }
